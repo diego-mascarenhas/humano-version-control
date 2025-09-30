@@ -236,10 +236,10 @@ class AuditTrailController extends Controller
             ->addColumn('actions', function ($activity) {
                 $actions = '';
 
-                // ✅ BOTÓN PRINCIPAL - USA EL NUEVO SISTEMA DINÁMICO
+                // ✅ ICONO SIN ESTILO DE BOTÓN - Acceso directo por Activity ID
                 $actions .= '<a href="' . route('version-control.activity.show', $activity->id) . '"
-                            class="btn btn-sm btn-outline-primary" title="Ver Actividad">
-                            <i class="ti ti-eye"></i>
+                            class="text-body" title="Ver Actividad">
+                            <i class="ti ti-eye ti-sm me-2"></i>
                             </a>';
 
                 return $actions;
