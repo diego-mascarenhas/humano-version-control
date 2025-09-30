@@ -81,9 +81,9 @@
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">Today</span>
+                <span class="fw-semibold d-block mb-1">{{ __('Today') }}</span>
                 <h3 class="card-title mb-2">{{ number_format($stats['today_activities']) }}</h3>
-                <small class="text-muted">Activities recorded</small>
+                <small class="text-muted">{{ __('Activities recorded') }}</small>
             </div>
         </div>
     </div>
@@ -94,9 +94,9 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="card-title m-0">Recent Activity</h5>
+                <h5 class="card-title m-0">{{ __('Recent Activity') }}</h5>
                 <a href="{{ route('version-control.audit.index') }}" class="btn btn-sm btn-outline-primary">
-                    View All
+                    {{ __('View All') }}
                 </a>
             </div>
             <div class="card-body">
@@ -112,17 +112,17 @@
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">
                                         {{ class_basename($activity->subject_type) }}
-                                        {{ $activity->description }}
+                                        {{ __($activity->description) }}
                                     </h6>
                                     <small class="text-muted">
-                                        by {{ $activity->causer ? $activity->causer->name : 'System' }}
+                                        {{ __('by') }} {{ $activity->causer ? $activity->causer->name : __('System') }}
                                         - {{ $activity->created_at->diffForHumans() }}
                                     </small>
                                 </div>
                                 {{-- ✅ NUEVO SISTEMA DINÁMICO - Acceso directo por Activity ID --}}
                                 <a href="{{ route('version-control.activity.show', $activity->id) }}" 
                                    class="btn btn-sm btn-outline-primary">
-                                    <i class="ti ti-eye ti-sm me-1"></i>View Activity
+                                    <i class="ti ti-eye ti-sm me-1"></i>{{ __('View Activity') }}
                                 </a>
                             </div>
                         @endforeach
@@ -130,7 +130,7 @@
                 @else
                     <div class="text-center py-4">
                         <i class="ti ti-history display-4 text-muted"></i>
-                        <p class="text-muted mt-2">No recent activity found</p>
+                        <p class="text-muted mt-2">{{ __('No recent activity found') }}</p>
                     </div>
                 @endif
             </div>
@@ -141,7 +141,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title m-0">Model Activity</h5>
+                <h5 class="card-title m-0">{{ __('Model Activity') }}</h5>
             </div>
             <div class="card-body">
                 @if(count($modelStats) > 0)
@@ -149,7 +149,7 @@
                         <div class="d-flex align-items-center mb-3">
                             <div class="flex-grow-1">
                                 <h6 class="mb-0">{{ class_basename($model) }}</h6>
-                                <small class="text-muted">{{ number_format($count) }} activities</small>
+                                <small class="text-muted">{{ number_format($count) }} {{ __('activities') }}</small>
                             </div>
                             <div class="badge bg-primary">{{ $count }}</div>
                         </div>
@@ -157,7 +157,7 @@
                 @else
                     <div class="text-center">
                         <i class="ti ti-database-off display-6 text-muted"></i>
-                        <p class="text-muted mt-2">No tracked models</p>
+                        <p class="text-muted mt-2">{{ __('No tracked models') }}</p>
                     </div>
                 @endif
             </div>
