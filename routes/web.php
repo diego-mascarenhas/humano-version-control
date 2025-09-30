@@ -19,8 +19,11 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
     // Main version control dashboard
     Route::get('/', [VersionControlController::class, 'index'])->name('index');
 
-    // ✅ NUEVA RUTA PRINCIPAL - Acceso dinámico por Activity ID
-    Route::get('/activity/{activityId}', [AuditTrailController::class, 'showActivity'])->name('activity.show');
+    // ✅ RUTAS ESPECÍFICAS PRIMERO - Antes que las dinámicas
+    Route::get('/activity/comparison', [AuditTrailController::class, 'compare'])->name('audit.compare');
+    
+    // ✅ NUEVA RUTA PRINCIPAL - Acceso dinámico por Activity ID (DESPUÉS de las específicas)
+    Route::get('/activity/{activityId}', [AuditTrailController::class, 'showActivity'])->name('activity.show')->where('activityId', '[0-9]+');
 
     // Audit trails (mantener para compatibilidad)
     Route::get('/audit/{model?}', [AuditTrailController::class, 'index'])->name('audit.index');
@@ -29,7 +32,6 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
 
     // User activity
     Route::get('/users/{user}/activity', [AuditTrailController::class, 'userActivity'])->name('users.activity');
-    Route::get('/activity/comparison', [AuditTrailController::class, 'compare'])->name('audit.compare');
 
     // Restoration
     Route::get('/restore/{model}/{id}/version/{version}', [RestorationController::class, 'preview'])->name('restore.preview');
@@ -38,6 +40,6 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
 
     // API endpoints - Dinámicos
     Route::get('/api/activities', [AuditTrailController::class, 'activities'])->name('api.activities');
-    Route::get('/api/activity/{activityId}/versions', [AuditTrailController::class, 'getActivityVersions'])->name('api.activity.versions');
+    Route::get('/api/activity/{activityId}/versions', [AuditTrailController::class, 'getActivityVersions'])->name('api.activity.versions')->where('activityId', '[0-9]+');
     Route::get('/api/{model}/{id}/versions', [VersionControlController::class, 'getVersions'])->name('api.versions');
 });
