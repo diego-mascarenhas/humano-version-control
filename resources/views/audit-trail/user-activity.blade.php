@@ -67,7 +67,7 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">{{ __('Activity Timeline') }}</h5>
-        <span class="badge bg-primary">{{ $activities->total() }} {{ __('Activities') }}</span>
+        <span class="badge bg-primary">{{ $activities->total() }} {{ $activities->total() == 1 ? __('Activity') : __('Activities') }}</span>
     </div>
     <div class="card-body">
         @if($activities->count() > 0)

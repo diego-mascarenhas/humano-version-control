@@ -36,7 +36,7 @@
                 </p>
             </div>
             <div class="col-md-4 text-end">
-                <div class="badge bg-primary fs-6">{{ $activities->count() }} {{ __('Versions') }}</div>
+                <div class="badge bg-primary fs-6">{{ $activities->count() }} {{ $activities->count() == 1 ? __('Version') : __('Versions') }}</div>
             </div>
         </div>
     </div>
@@ -92,7 +92,7 @@
                                     @endphp
                                     @if(count($attributes) > 0)
                                         <div class="mb-3">
-                                            <strong>Changes:</strong> {{ count($attributes) }} field(s)
+                                            <strong>{{ __('Changes') }}:</strong> {{ count($attributes) }} {{ count($attributes) == 1 ? __('field') : __('fields') }}
                                             <small class="d-block text-muted">
                                                 {{ implode(', ', array_keys($attributes)) }}
                                             </small>
