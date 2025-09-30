@@ -1,6 +1,6 @@
 @extends('layouts.layoutMaster')
 
-@section('title', 'Audit Trail')
+@section('title', __('Audit Trail'))
 
 @section('vendor-style')
 <link rel="stylesheet" href="{{asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
@@ -19,12 +19,12 @@
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
-        <h4 class="mb-1 mt-3">Audit Trail</h4>
-        <p class="text-muted">Complete history of all system changes</p>
+        <h4 class="mb-1 mt-3">{{ __('Audit Trail') }}</h4>
+        <p class="text-muted">{{ __('Complete history of all system changes') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Dashboard
+            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Dashboard') }}
         </a>
     </div>
 </div>
@@ -32,14 +32,14 @@
 <!-- Filters Card -->
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="card-title">Filters</h5>
+        <h5 class="card-title">{{ __('Filters') }}</h5>
     </div>
     <div class="card-body">
         <form id="filters-form" class="row g-3">
             <div class="col-md-3">
-                <label for="model-filter" class="form-label">Model Type</label>
+                <label for="model-filter" class="form-label">{{ __('Model Type') }}</label>
                 <select id="model-filter" class="form-select">
-                    <option value="">All Models</option>
+                    <option value="">{{ __('All Models') }}</option>
                     @foreach($modelTypes as $type => $name)
                         <option value="{{ $type }}" {{ $model === $type ? 'selected' : '' }}>
                             {{ $name }}
@@ -49,9 +49,9 @@
             </div>
 
             <div class="col-md-3">
-                <label for="user-filter" class="form-label">User</label>
+                <label for="user-filter" class="form-label">{{ __('User') }}</label>
                 <select id="user-filter" class="form-select">
-                    <option value="">All Users</option>
+                    <option value="">{{ __('All Users') }}</option>
                     @foreach($users as $userId => $userName)
                         <option value="{{ $userId }}">{{ $userName }}</option>
                     @endforeach
@@ -59,21 +59,21 @@
             </div>
 
             <div class="col-md-2">
-                <label for="date-from" class="form-label">From Date</label>
+                <label for="date-from" class="form-label">{{ __('Date From') }}</label>
                 <input type="date" id="date-from" class="form-control">
             </div>
 
             <div class="col-md-2">
-                <label for="date-to" class="form-label">To Date</label>
+                <label for="date-to" class="form-label">{{ __('Date To') }}</label>
                 <input type="date" id="date-to" class="form-control">
             </div>
 
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">
-                    <i class="ti ti-filter me-1"></i>Filter
+                    <i class="ti ti-filter me-1"></i>{{ __('Filter') }}
                 </button>
                 <button type="button" id="clear-filters" class="btn btn-outline-secondary">
-                    <i class="ti ti-x me-1"></i>Clear
+                    <i class="ti ti-x me-1"></i>{{ __('Clear') }}
                 </button>
             </div>
         </form>
@@ -86,13 +86,13 @@
         <table id="activities-table" class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Model</th>
-                    <th>Record</th>
-                    <th>Action</th>
-                    <th>User</th>
-                    <th>Changes</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th>{{ __('Model') }}</th>
+                    <th>{{ __('Record') }}</th>
+                    <th>{{ __('Action') }}</th>
+                    <th>{{ __('User') }}</th>
+                    <th>{{ __('Changes') }}</th>
+                    <th>{{ __('Date') }}</th>
+                    <th>{{ __('Actions') }}</th>
                 </tr>
             </thead>
         </table>

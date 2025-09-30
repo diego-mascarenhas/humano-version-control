@@ -1,19 +1,19 @@
 @extends('layouts.layoutMaster')
 
-@section('title', 'Version History - ' . class_basename($subject))
+@section('title', __('Version History') . ' - ' . class_basename($subject))
 
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">Version Control / Versions /</span>
+            <span class="text-muted fw-light">{{ __('Version Control') }} / {{ __('Versions') }} /</span>
             {{ class_basename($subject) }} #{{ $subject->id }}
         </h4>
-        <p class="text-muted">Version history and restoration options</p>
+        <p class="text-muted">{{ __('Version history and restoration options') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.audit.show', ['model' => $model, 'id' => $subject->id]) }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Details
+            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Details') }}
         </a>
     </div>
 </div>
@@ -31,12 +31,12 @@
                     @endif
                 </h5>
                 <p class="text-muted mb-0">
-                    Created {{ $subject->created_at->format('M d, Y H:i:s') }} •
-                    Last modified {{ $subject->updated_at->format('M d, Y H:i:s') }}
+                    {{ __('Created') }} {{ $subject->created_at->format('M d, Y H:i:s') }} •
+                    {{ __('Last modified') }} {{ $subject->updated_at->format('M d, Y H:i:s') }}
                 </p>
             </div>
             <div class="col-md-4 text-end">
-                <div class="badge bg-primary fs-6">{{ $activities->count() }} Versions</div>
+                <div class="badge bg-primary fs-6">{{ $activities->count() }} {{ __('Versions') }}</div>
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@
 <!-- Version List -->
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title mb-0">Available Versions</h5>
+        <h5 class="card-title mb-0">{{ __('Available Versions') }}</h5>
     </div>
     <div class="card-body">
         @if($activities->count() > 0)
@@ -58,9 +58,9 @@
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div>
                                         <h6 class="card-title mb-1">
-                                            Version #{{ $activities->count() - $index }}
+                                            {{ __('Version') }} #{{ $activities->count() - $index }}
                                             @if($index === 0)
-                                                <span class="badge bg-primary ms-2">Current</span>
+                                                <span class="badge bg-primary ms-2">{{ __('Current') }}</span>
                                             @endif
                                         </h6>
                                         <small class="text-muted">
@@ -81,9 +81,9 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <strong>Action:</strong> {{ ucfirst($activity->description) }}<br>
-                                    <strong>By:</strong> {{ $activity->causer ? $activity->causer->name : 'System' }}<br>
-                                    <strong>Time:</strong> {{ $activity->created_at->diffForHumans() }}
+                                    <strong>{{ __('Action') }}:</strong> {{ __(ucfirst($activity->description)) }}<br>
+                                    <strong>{{ __('By') }}:</strong> {{ $activity->causer ? $activity->causer->name : __('System') }}<br>
+                                    <strong>{{ __('Time') }}:</strong> {{ $activity->created_at->diffForHumans() }}
                                 </div>
 
                                 @if($activity->properties->isNotEmpty())
@@ -121,7 +121,7 @@
                                             <option value="">Select version...</option>
                                             @foreach($activities as $index => $activity)
                                                 <option value="{{ $activity->id }}">
-                                                    Version #{{ $activities->count() - $index }} - {{ $activity->created_at->format('M d, H:i') }}
+                                                    {{ __('Version') }} #{{ $activities->count() - $index }} - {{ $activity->created_at->format('M d, H:i') }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -132,7 +132,7 @@
                                             <option value="">Select version...</option>
                                             @foreach($activities as $index => $activity)
                                                 <option value="{{ $activity->id }}">
-                                                    Version #{{ $activities->count() - $index }} - {{ $activity->created_at->format('M d, H:i') }}
+                                                    {{ __('Version') }} #{{ $activities->count() - $index }} - {{ $activity->created_at->format('M d, H:i') }}
                                                 </option>
                                             @endforeach
                                         </select>
