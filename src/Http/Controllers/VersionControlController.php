@@ -81,6 +81,7 @@ class VersionControlController extends Controller
             ->groupBy('subject_type')
             ->orderBy('total', 'desc')
             ->take(10)
+            ->get()  // ✅ FIX: Ejecutar query primero para obtener Collection
             ->mapWithKeys(function ($item) {
                 $displayName = $this->getModelDisplayName($item->subject_type);
                 return [$displayName => $item->total];
