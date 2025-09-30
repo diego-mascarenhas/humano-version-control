@@ -9,6 +9,66 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AuditTrailController extends Controller
 {
+    /**
+     * ✅ MÉTODO PRINCIPAL - Mostrar actividad específica por ID
+     */
+    public function showActivity(Request $request, int $activityId)
+    {
+        $activity = Activity::with(['causer', 'subject'])->find($activityId);
+
+        if (!$activity) {
+            abort(404, 'Activity not found');
+        }
+
+        // Obtener todas las actividades relacionadas al mismo sujeto
+        $relatedActivities = Activity::forSubject($activity->subject)
+            ->with('causer')
+            ->latest()
+            ->paginate(20);
+
+        $subject = $activity->subject;
+        $activities = $relatedActivities;
+        $model = $this->getModelDisplayName($activity->subject_type);
+        $selectedActivity = $activity;
+
+        return view('humano-version-control::audit-trail.show', compact(
+            'subject',
+            'activities',
+            'model',
+            'selectedActivity'
+        ));
+    }
+
+    /**
+     * ✅ API endpoint para obtener versiones de una actividad específica
+     */
+    public function getActivityVersions(Request $request, int $activityId)
+    {
+        $activity = Activity::find($activityId);
+
+        if (!$activity) {
+            return response()->json(['error' => 'Activity not found'], 404);
+        }
+
+        $activities = Activity::forSubject($activity->subject)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($activity) {
+                return [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'created_at' => $activity->created_at->format('Y-m-d H:i:s'),
+                    'causer' => $activity->causer ? $activity->causer->name : 'System',
+                    'properties' => $activity->properties,
+                ];
+            });
+
+        return response()->json($activities);
+    }
+
+    /**
+     * ✅ Índice mejorado - Todos los modelos automáticamente
+     */
     public function index(Request $request, string $model = null)
     {
         $modelTypes = $this->getAvailableModelTypes();
@@ -21,30 +81,40 @@ class AuditTrailController extends Controller
         ));
     }
 
+    /**
+     * Mantener para compatibilidad - pero mejorado
+     */
     public function show(Request $request, string $model, int $id)
     {
-        $modelClass = $this->getModelClass($model);
+        $modelClass = $this->resolveModelClass($model);
 
-        if (!$modelClass || !$modelClass::find($id)) {
-            abort(404, 'Model not found');
+        if (!$modelClass) {
+            abort(404, 'Model type not found');
         }
 
         $subject = $modelClass::find($id);
+        if (!$subject) {
+            abort(404, 'Record not found');
+        }
+
         $activities = Activity::forSubject($subject)
             ->with('causer')
             ->latest()
             ->paginate(20);
 
+        $modelDisplayName = $this->getModelDisplayName($modelClass);
+
         return view('humano-version-control::audit-trail.show', compact(
             'subject',
             'activities',
-            'model'
+            'model',
+            'modelDisplayName'
         ));
     }
 
     public function versions(Request $request, string $model, int $id)
     {
-        $modelClass = $this->getModelClass($model);
+        $modelClass = $this->resolveModelClass($model);
 
         if (!$modelClass) {
             return response()->json(['error' => 'Invalid model'], 400);
@@ -68,7 +138,7 @@ class AuditTrailController extends Controller
 
     public function userActivity(Request $request, int $user)
     {
-        $userModel = \App\Models\User::find($user);
+        $userModel = $this->getUserModel()::find($user);
 
         if (!$userModel) {
             abort(404, 'User not found');
@@ -110,13 +180,17 @@ class AuditTrailController extends Controller
         ));
     }
 
+    /**
+     * ✅ DataTables API mejorada - Completamente dinámica
+     */
     public function activities(Request $request)
     {
         $query = Activity::with(['causer', 'subject']);
 
-        // Apply filters
+        // Aplicar filtros dinámicos
         if ($request->filled('model')) {
-            $modelClass = $this->getModelClass($request->model);
+            // Buscar por clase completa o basename
+            $modelClass = $this->resolveModelClass($request->model);
             if ($modelClass) {
                 $query->where('subject_type', $modelClass);
             }
@@ -136,11 +210,14 @@ class AuditTrailController extends Controller
 
         return DataTables::eloquent($query)
             ->addColumn('model_name', function ($activity) {
-                return class_basename($activity->subject_type);
+                return $this->getModelDisplayName($activity->subject_type);
             })
             ->addColumn('subject_name', function ($activity) {
                 if ($activity->subject) {
-                    return $activity->subject->name ?? $activity->subject->title ?? "#{$activity->subject_id}";
+                    return $activity->subject->name ??
+                           $activity->subject->title ??
+                           $activity->subject->email ??
+                           "#{$activity->subject_id}";
                 }
                 return 'Deleted';
             })
@@ -148,11 +225,24 @@ class AuditTrailController extends Controller
                 return $activity->causer ? $activity->causer->name : 'System';
             })
             ->addColumn('changes_summary', function ($activity) {
-                $changes = $activity->properties->get('attributes', []);
-                return count($changes) . ' field(s) changed';
+                $properties = $activity->properties;
+                if (isset($properties['attributes']) && isset($properties['old'])) {
+                    $changed = array_keys($properties['attributes']);
+                    return implode(', ', array_slice($changed, 0, 3)) .
+                           (count($changed) > 3 ? '...' : '');
+                }
+                return 'N/A';
             })
             ->addColumn('actions', function ($activity) {
-                return view('humano-version-control::partials.activity-actions', compact('activity'));
+                $actions = '';
+
+                // ✅ BOTÓN PRINCIPAL - USA EL NUEVO SISTEMA DINÁMICO
+                $actions .= '<a href="' . route('version-control.activity.show', $activity->id) . '"
+                            class="btn btn-sm btn-outline-primary" title="Ver Actividad">
+                            <i class="ti ti-eye"></i>
+                            </a>';
+
+                return $actions;
             })
             ->editColumn('created_at', function ($activity) {
                 return $activity->created_at->format('Y-m-d H:i:s');
@@ -161,39 +251,82 @@ class AuditTrailController extends Controller
             ->make(true);
     }
 
+    /**
+     * ✅ Obtener tipos de modelos dinámicamente desde Activity log
+     */
     private function getAvailableModelTypes(): array
     {
         return Activity::distinct('subject_type')
             ->pluck('subject_type')
             ->mapWithKeys(function ($type) {
-                return [$type => class_basename($type)];
+                $displayName = $this->getModelDisplayName($type);
+                $slug = strtolower(class_basename($type));
+                return [$slug => $displayName];
             })
             ->toArray();
     }
 
-    private function getActiveUsers(): array
+    /**
+     * ✅ Obtener usuarios activos dinámicamente
+     */
+    private function getActiveUsers()
     {
         return Activity::with('causer')
             ->whereNotNull('causer_id')
             ->distinct('causer_id')
             ->get()
             ->pluck('causer.name', 'causer.id')
+            ->filter()
             ->toArray();
     }
 
-    private function getModelClass(string $model): ?string
+    /**
+     * ✅ Obtener nombre amigable del modelo dinámicamente
+     */
+    private function getModelDisplayName(string $modelClass): string
     {
-        $modelMap = [
-            'contact' => \App\Models\Contact::class,
-            'project' => \App\Models\Project::class,
-            'message' => \App\Models\Message::class,
-            'user' => \App\Models\User::class,
-            'team' => \App\Models\Team::class,
-        ];
+        $basename = class_basename($modelClass);
 
-        return $modelMap[$model] ?? null;
+        // Convertir CamelCase a words separadas
+        $words = preg_split('/(?=[A-Z])/', $basename, -1, PREG_SPLIT_NO_EMPTY);
+
+        return implode(' ', $words);
     }
 
+    /**
+     * ✅ Resolver clase de modelo dinámicamente - ¡ELIMINA EL MAPEO ESTÁTICO!
+     */
+    private function resolveModelClass(string $modelIdentifier): ?string
+    {
+        // Obtener todos los tipos de modelos disponibles
+        $availableTypes = Activity::distinct('subject_type')->pluck('subject_type');
+
+        foreach ($availableTypes as $type) {
+            // Comparar por basename (case-insensitive)
+            if (strtolower(class_basename($type)) === strtolower($modelIdentifier)) {
+                return $type;
+            }
+
+            // Comparar por clase completa
+            if ($type === $modelIdentifier) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * ✅ Obtener modelo de usuario dinámicamente
+     */
+    private function getUserModel(): string
+    {
+        return config('humano-version-control.user_model', '\\App\\Models\\User');
+    }
+
+    /**
+     * Comparar actividades
+     */
     private function compareActivities(Activity $activity1, Activity $activity2): array
     {
         $attributes1 = $activity1->properties->get('attributes', []);

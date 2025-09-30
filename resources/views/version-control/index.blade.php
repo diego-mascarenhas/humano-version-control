@@ -119,14 +119,11 @@
                                         - {{ $activity->created_at->diffForHumans() }}
                                     </small>
                                 </div>
-                                @if($activity->subject)
-                                    <a href="{{ route('version-control.audit.show', [
-                                        'model' => strtolower(class_basename($activity->subject_type)),
-                                        'id' => $activity->subject_id
-                                    ]) }}" class="btn btn-sm btn-outline-secondary">
-                                        View
-                                    </a>
-                                @endif
+                                {{-- ✅ NUEVO SISTEMA DINÁMICO - Acceso directo por Activity ID --}}
+                                <a href="{{ route('version-control.activity.show', $activity->id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="ti ti-eye ti-sm me-1"></i>View Activity
+                                </a>
                             </div>
                         @endforeach
                     </div>

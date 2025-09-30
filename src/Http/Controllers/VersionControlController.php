@@ -22,15 +22,23 @@ class VersionControlController extends Controller
         ));
     }
 
+    /**
+     * ✅ Versiones mejoradas - Acceso dinámico
+     */
     public function getVersions(Request $request, string $model, int $id)
     {
-        $modelClass = $this->getModelClass($model);
+        $modelClass = $this->resolveModelClass($model);
 
         if (!$modelClass) {
             return response()->json(['error' => 'Invalid model'], 400);
         }
 
-        $activities = Activity::forSubject($modelClass::find($id))
+        $subject = $modelClass::find($id);
+        if (!$subject) {
+            return response()->json(['error' => 'Record not found'], 404);
+        }
+
+        $activities = Activity::forSubject($subject)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($activity) {
@@ -64,26 +72,58 @@ class VersionControlController extends Controller
             ->get();
     }
 
+    /**
+     * ✅ Stats de modelos mejorados - Nombres amigables
+     */
     private function getModelStats(): array
     {
         return Activity::select('subject_type', DB::raw('count(*) as total'))
             ->groupBy('subject_type')
             ->orderBy('total', 'desc')
             ->take(10)
-            ->pluck('total', 'subject_type')
+            ->mapWithKeys(function ($item) {
+                $displayName = $this->getModelDisplayName($item->subject_type);
+                return [$displayName => $item->total];
+            })
             ->toArray();
     }
 
-    private function getModelClass(string $model): ?string
+    /**
+     * ✅ Obtener nombre amigable del modelo dinámicamente
+     */
+    private function getModelDisplayName(string $modelClass): string
     {
-        $modelMap = [
-            'contact' => \App\Models\Contact::class,
-            'project' => \App\Models\Project::class,
-            'message' => \App\Models\Message::class,
-            'user' => \App\Models\User::class,
-            'team' => \App\Models\Team::class,
-        ];
+        $basename = class_basename($modelClass);
 
-        return $modelMap[$model] ?? null;
+        // Convertir CamelCase a words separadas
+        $words = preg_split('/(?=[A-Z])/', $basename, -1, PREG_SPLIT_NO_EMPTY);
+
+        return implode(' ', $words);
     }
+
+    /**
+     * ✅ Resolver clase de modelo dinámicamente - ¡ELIMINA EL MAPEO ESTÁTICO!
+     */
+    private function resolveModelClass(string $modelIdentifier): ?string
+    {
+        // Obtener todos los tipos de modelos disponibles
+        $availableTypes = Activity::distinct('subject_type')->pluck('subject_type');
+
+        foreach ($availableTypes as $type) {
+            // Comparar por basename (case-insensitive)
+            if (strtolower(class_basename($type)) === strtolower($modelIdentifier)) {
+                return $type;
+            }
+
+            // Comparar por clase completa
+            if ($type === $modelIdentifier) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    // ❌ MÉTODO ELIMINADO - Ya no se necesita mapeo estático
+    // private function getModelClass(string $model): ?string
 }

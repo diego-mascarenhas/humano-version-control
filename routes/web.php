@@ -19,7 +19,10 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
     // Main version control dashboard
     Route::get('/', [VersionControlController::class, 'index'])->name('index');
 
-    // Audit trails
+    // ✅ NUEVA RUTA PRINCIPAL - Acceso dinámico por Activity ID
+    Route::get('/activity/{activityId}', [AuditTrailController::class, 'showActivity'])->name('activity.show');
+
+    // Audit trails (mantener para compatibilidad)
     Route::get('/audit/{model?}', [AuditTrailController::class, 'index'])->name('audit.index');
     Route::get('/audit/{model}/{id}', [AuditTrailController::class, 'show'])->name('audit.show');
     Route::get('/audit/{model}/{id}/versions', [AuditTrailController::class, 'versions'])->name('audit.versions');
@@ -33,7 +36,8 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
     Route::post('/restore/{model}/{id}/version/{version}', [RestorationController::class, 'restore'])->name('restore.execute');
     Route::post('/restore/{model}/{id}/field/{field}/version/{version}', [RestorationController::class, 'restoreField'])->name('restore.field');
 
-    // API endpoints for DataTables
+    // API endpoints - Dinámicos
     Route::get('/api/activities', [AuditTrailController::class, 'activities'])->name('api.activities');
+    Route::get('/api/activity/{activityId}/versions', [AuditTrailController::class, 'getActivityVersions'])->name('api.activity.versions');
     Route::get('/api/{model}/{id}/versions', [VersionControlController::class, 'getVersions'])->name('api.versions');
 });

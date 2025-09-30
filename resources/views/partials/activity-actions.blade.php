@@ -1,12 +1,11 @@
 <div class="d-flex justify-content-center align-items-center">
-    @if($activity->subject)
-        <a href="{{ route('version-control.audit.show', [
-            'model' => strtolower(class_basename($activity->subject_type)),
-            'id' => $activity->subject_id
-        ]) }}" class="text-body me-2" title="View Details">
-            <i class="ti ti-eye ti-sm"></i>
-        </a>
+    {{-- ✅ NUEVO SISTEMA DINÁMICO - Acceso directo por Activity ID --}}
+    <a href="{{ route('version-control.activity.show', $activity->id) }}" 
+       class="text-body me-2" title="View Activity Details">
+        <i class="ti ti-eye ti-sm"></i>
+    </a>
 
+    @if($activity->subject)
         @can('restore-versions')
             <a href="{{ route('version-control.restore.preview', [
                 'model' => strtolower(class_basename($activity->subject_type)),
