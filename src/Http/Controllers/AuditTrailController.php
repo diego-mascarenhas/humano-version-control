@@ -29,12 +29,14 @@ class AuditTrailController extends Controller
         $subject = $activity->subject;
         $activities = $relatedActivities;
         $model = $this->getModelDisplayName($activity->subject_type);
+        $modelSlug = strtolower(class_basename($activity->subject_type));
         $selectedActivity = $activity;
 
         return view('humano-version-control::audit-trail.show', compact(
             'subject',
             'activities',
             'model',
+            'modelSlug',
             'selectedActivity'
         ));
     }
@@ -102,13 +104,14 @@ class AuditTrailController extends Controller
             ->latest()
             ->paginate(20);
 
-        $modelDisplayName = $this->getModelDisplayName($modelClass);
+        $model = $this->getModelDisplayName($modelClass);
+        $modelSlug = strtolower(class_basename($modelClass));
 
         return view('humano-version-control::audit-trail.show', compact(
             'subject',
             'activities',
             'model',
-            'modelDisplayName'
+            'modelSlug'
         ));
     }
 

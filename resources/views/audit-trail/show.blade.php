@@ -25,7 +25,7 @@
             <i class="ti ti-arrow-left me-1"></i>Back to Audit Trail
         </a>
 
-        <a href="{{ route('version-control.audit.versions', ['model' => $model, 'id' => $subject->id]) }}" class="btn btn-primary">
+        <a href="{{ route('version-control.audit.versions', ['model' => $modelSlug, 'id' => $subject->id]) }}" class="btn btn-primary">
             <i class="ti ti-versions me-1"></i>View Versions
         </a>
     </div>
