@@ -100,24 +100,19 @@
                                     @endif
                                 @endif
 
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-primary flex-fill"
-                                            onclick="showVersionDetails({{ $activity->id }})">
-                                        <i class="ti ti-eye me-1"></i>View Details
-                                    </button>
-
-                                    @can('restore-versions')
-                                        @if($index !== 0)
+                                @can('restore-versions')
+                                    @if($index !== 0)
+                                        <div class="d-flex justify-content-center">
                                             <a href="{{ route('version-control.restore.preview', [
                                                 'model' => $model,
                                                 'id' => $subject->id,
                                                 'version' => $activity->id
                                             ]) }}" class="btn btn-sm btn-success">
-                                                <i class="ti ti-restore"></i>
+                                                <i class="ti ti-restore me-1"></i>Restore
                                             </a>
-                                        @endif
-                                    @endcan
-                                </div>
+                                        </div>
+                                    @endif
+                                @endcan
                             </div>
                         </div>
                     </div>
@@ -174,113 +169,7 @@
     </div>
 </div>
 
-<!-- Version Details Modal -->
-<div class="modal fade" id="versionDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Version Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="versionDetailsContent">
-                <!-- Content will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
+{{-- Modal removed since View Details buttons were removed --}}
 @endsection
 
-@section('page-script')
-<script>
-function showVersionDetails(activityId) {
-    // ✅ NUEVA IMPLEMENTACIÓN - Usar nuevo sistema dinámico
-    // Redirigir al nuevo sistema de acceso directo por Activity ID
-    window.location.href = "{{ route('version-control.activity.show', ':activityId') }}".replace(':activityId', activityId);
-}
-
-// ✅ FUNCIÓN ALTERNATIVA - Modal con datos existentes (si se prefiere mantener modal)
-function showVersionDetailsModal(activityId) {
-    // Obtener datos del servidor via AJAX
-    fetch(`/version-control/api/activity/${activityId}/versions`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length === 0) {
-                alert('Activity not found');
-                return;
-            }
-
-            const activity = data[0]; // Primera actividad es la que queremos mostrar
-            
-            let content = `
-                <div class="mb-3">
-                    <strong>Action:</strong> ${activity.description.charAt(0).toUpperCase() + activity.description.slice(1)}<br>
-                    <strong>Date:</strong> ${new Date(activity.created_at).toLocaleString()}<br>
-                    <strong>User:</strong> ${activity.causer || 'System'}
-                </div>
-            `;
-
-            if (activity.properties && activity.properties.attributes) {
-                content += '<h6>Changed Fields:</h6>';
-                content += '<div class="table-responsive">';
-                content += '<table class="table table-sm">';
-                content += '<thead><tr><th>Field</th><th>Old Value</th><th>New Value</th></tr></thead>';
-                content += '<tbody>';
-
-                const attributes = activity.properties.attributes;
-                const oldValues = activity.properties.old || {};
-
-                for (const [field, newValue] of Object.entries(attributes)) {
-                    const oldValue = oldValues[field];
-                    
-                    let displayOldValue = oldValue;
-                    let displayNewValue = newValue;
-                    
-                    // Format values for display
-                    [displayOldValue, displayNewValue].forEach((value, index) => {
-                        if (typeof value === 'object' && value !== null) {
-                            if (index === 0) displayOldValue = JSON.stringify(value, null, 2);
-                            else displayNewValue = JSON.stringify(value, null, 2);
-                        } else if (value === null) {
-                            if (index === 0) displayOldValue = '<em class="text-muted">null</em>';
-                            else displayNewValue = '<em class="text-muted">null</em>';
-                        } else if (value === '') {
-                            if (index === 0) displayOldValue = '<em class="text-muted">(empty)</em>';
-                            else displayNewValue = '<em class="text-muted">(empty)</em>';
-                        }
-                    });
-
-                    const fieldName = field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    content += `<tr>
-                        <td><strong>${fieldName}</strong></td>
-                        <td>${displayOldValue || '<em class="text-muted">N/A</em>'}</td>
-                        <td>${displayNewValue}</td>
-                    </tr>`;
-                }
-
-                content += '</tbody></table></div>';
-
-                // ✅ BOTÓN PARA VER DETALLES COMPLETOS
-                content += `<div class="mt-3 text-center">
-                    <a href="/version-control/activity/${activityId}" class="btn btn-primary">
-                        <i class="ti ti-external-link me-1"></i>View Full Details
-                    </a>
-                </div>`;
-            } else {
-                content += '<p class="text-muted">No detailed information available for this version.</p>';
-                content += `<div class="mt-3 text-center">
-                    <a href="/version-control/activity/${activityId}" class="btn btn-primary">
-                        <i class="ti ti-external-link me-1"></i>View Activity Details
-                    </a>
-                </div>`;
-            }
-
-            document.getElementById('versionDetailsContent').innerHTML = content;
-            new bootstrap.Modal(document.getElementById('versionDetailsModal')).show();
-        })
-        .catch(error => {
-            console.error('Error fetching activity details:', error);
-            alert('Error loading activity details');
-        });
-}
-</script>
-@endsection
+{{-- No JavaScript needed anymore since View Details buttons were removed --}}
