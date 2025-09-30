@@ -174,24 +174,7 @@
                                     {{ $changedFields->keys()->map(fn($field) => ucwords(str_replace('_', ' ', $field)))->join(', ') }}
                                 </small>
                             </div>
-                            @can('restore-versions')
-                                <div class="ms-3">
-                                    <a href="{{ route('version-control.restore.preview', [
-                                        'model' => strtolower(class_basename($activity1->subject_type)),
-                                        'id' => $activity1->subject_id,
-                                        'version' => $activity1->id
-                                    ]) }}" class="btn btn-sm btn-primary me-2">
-                                        <i class="ti ti-restore me-1"></i>Restore Version A
-                                    </a>
-                                    <a href="{{ route('version-control.restore.preview', [
-                                        'model' => strtolower(class_basename($activity2->subject_type)),
-                                        'id' => $activity2->subject_id,
-                                        'version' => $activity2->id
-                                    ]) }}" class="btn btn-sm btn-success">
-                                        <i class="ti ti-restore me-1"></i>Restore Version B
-                                    </a>
-                                </div>
-                            @endcan
+                            {{-- Restore buttons removed as requested --}}
                         </div>
                     </div>
                 </div>
