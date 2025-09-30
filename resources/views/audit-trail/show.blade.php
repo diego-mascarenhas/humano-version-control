@@ -106,17 +106,7 @@
                                     </small>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    @can('restore-versions')
-                                        @if($activity->description === 'updated' || $activity->description === 'created')
-                                            <a href="{{ route('version-control.restore.preview', [
-                                                'model' => $model,
-                                                'id' => $subject->id,
-                                                'version' => $activity->id
-                                            ]) }}" class="btn btn-sm btn-outline-success" title="Restore from this version">
-                                                <i class="ti ti-restore"></i>
-                                            </a>
-                                        @endif
-                                    @endcan
+                                    {{-- Restore button removed as requested --}}
                                     <button class="btn btn-sm btn-outline-primary"
                                             onclick="toggleDetails({{ $activity->id }})"
                                             title="Show/hide details">
