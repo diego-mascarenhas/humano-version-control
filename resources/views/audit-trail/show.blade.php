@@ -15,10 +15,22 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">Version Control / Audit /</span>
+            <span class="text-muted fw-light">Version Control / 
+                @if(isset($selectedActivity) && $selectedActivity->description === 'restored')
+                    Restoration /
+                @else
+                    Audit /
+                @endif
+            </span>
             {{ class_basename($subject) }} #{{ $subject->id }}
         </h4>
-        <p class="text-muted">Complete activity history for this record</p>
+        <p class="text-muted">
+            @if(isset($selectedActivity) && $selectedActivity->description === 'restored')
+                Record restoration details and history
+            @else
+                Complete activity history for this record
+            @endif
+        </p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.audit.index') }}" class="btn btn-outline-primary">
@@ -30,6 +42,11 @@
         </a>
     </div>
 </div>
+
+{{-- ✅ VISTA ESPECIAL PARA RESTAURACIONES --}}
+@if(isset($selectedActivity) && $selectedActivity->description === 'restored')
+    @include('humano-version-control::audit-trail.restoration-details', ['activity' => $selectedActivity, 'subject' => $subject])
+@else
 
 <!-- Record Information -->
 <div class="card mb-4">
@@ -279,4 +296,5 @@ function toggleDetails(activityId) {
     margin-top: 1rem;
 }
 </style>
+@endif
 @endsection

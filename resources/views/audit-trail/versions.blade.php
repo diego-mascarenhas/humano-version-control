@@ -193,50 +193,94 @@
 @section('page-script')
 <script>
 function showVersionDetails(activityId) {
-    // Find the activity data
-    const activities = @json($activities->toArray());
-    const activity = activities.data.find(a => a.id === activityId);
+    // ✅ NUEVA IMPLEMENTACIÓN - Usar nuevo sistema dinámico
+    // Redirigir al nuevo sistema de acceso directo por Activity ID
+    window.location.href = "{{ route('version-control.activity.show', ':activityId') }}".replace(':activityId', activityId);
+}
 
-    if (!activity) {
-        alert('Activity not found');
-        return;
-    }
-
-    let content = `
-        <div class="mb-3">
-            <strong>Action:</strong> ${activity.description.charAt(0).toUpperCase() + activity.description.slice(1)}<br>
-            <strong>Date:</strong> ${new Date(activity.created_at).toLocaleString()}<br>
-            <strong>User:</strong> ${activity.causer ? activity.causer.name : 'System'}
-        </div>
-    `;
-
-    if (activity.properties && activity.properties.attributes) {
-        content += '<h6>Changed Fields:</h6>';
-        content += '<div class="table-responsive">';
-        content += '<table class="table table-sm">';
-        content += '<thead><tr><th>Field</th><th>Value</th></tr></thead>';
-        content += '<tbody>';
-
-        for (const [field, value] of Object.entries(activity.properties.attributes)) {
-            let displayValue = value;
-            if (typeof value === 'object' && value !== null) {
-                displayValue = JSON.stringify(value);
-            } else if (value === null) {
-                displayValue = '<em>null</em>';
-            } else if (value === '') {
-                displayValue = '<em>(empty)</em>';
+// ✅ FUNCIÓN ALTERNATIVA - Modal con datos existentes (si se prefiere mantener modal)
+function showVersionDetailsModal(activityId) {
+    // Obtener datos del servidor via AJAX
+    fetch(`/version-control/api/activity/${activityId}/versions`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                alert('Activity not found');
+                return;
             }
 
-            content += `<tr><td><strong>${field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</strong></td><td>${displayValue}</td></tr>`;
-        }
+            const activity = data[0]; // Primera actividad es la que queremos mostrar
+            
+            let content = `
+                <div class="mb-3">
+                    <strong>Action:</strong> ${activity.description.charAt(0).toUpperCase() + activity.description.slice(1)}<br>
+                    <strong>Date:</strong> ${new Date(activity.created_at).toLocaleString()}<br>
+                    <strong>User:</strong> ${activity.causer || 'System'}
+                </div>
+            `;
 
-        content += '</tbody></table></div>';
-    } else {
-        content += '<p class="text-muted">No detailed information available for this version.</p>';
-    }
+            if (activity.properties && activity.properties.attributes) {
+                content += '<h6>Changed Fields:</h6>';
+                content += '<div class="table-responsive">';
+                content += '<table class="table table-sm">';
+                content += '<thead><tr><th>Field</th><th>Old Value</th><th>New Value</th></tr></thead>';
+                content += '<tbody>';
 
-    document.getElementById('versionDetailsContent').innerHTML = content;
-    new bootstrap.Modal(document.getElementById('versionDetailsModal')).show();
+                const attributes = activity.properties.attributes;
+                const oldValues = activity.properties.old || {};
+
+                for (const [field, newValue] of Object.entries(attributes)) {
+                    const oldValue = oldValues[field];
+                    
+                    let displayOldValue = oldValue;
+                    let displayNewValue = newValue;
+                    
+                    // Format values for display
+                    [displayOldValue, displayNewValue].forEach((value, index) => {
+                        if (typeof value === 'object' && value !== null) {
+                            if (index === 0) displayOldValue = JSON.stringify(value, null, 2);
+                            else displayNewValue = JSON.stringify(value, null, 2);
+                        } else if (value === null) {
+                            if (index === 0) displayOldValue = '<em class="text-muted">null</em>';
+                            else displayNewValue = '<em class="text-muted">null</em>';
+                        } else if (value === '') {
+                            if (index === 0) displayOldValue = '<em class="text-muted">(empty)</em>';
+                            else displayNewValue = '<em class="text-muted">(empty)</em>';
+                        }
+                    });
+
+                    const fieldName = field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    content += `<tr>
+                        <td><strong>${fieldName}</strong></td>
+                        <td>${displayOldValue || '<em class="text-muted">N/A</em>'}</td>
+                        <td>${displayNewValue}</td>
+                    </tr>`;
+                }
+
+                content += '</tbody></table></div>';
+
+                // ✅ BOTÓN PARA VER DETALLES COMPLETOS
+                content += `<div class="mt-3 text-center">
+                    <a href="/version-control/activity/${activityId}" class="btn btn-primary">
+                        <i class="ti ti-external-link me-1"></i>View Full Details
+                    </a>
+                </div>`;
+            } else {
+                content += '<p class="text-muted">No detailed information available for this version.</p>';
+                content += `<div class="mt-3 text-center">
+                    <a href="/version-control/activity/${activityId}" class="btn btn-primary">
+                        <i class="ti ti-external-link me-1"></i>View Activity Details
+                    </a>
+                </div>`;
+            }
+
+            document.getElementById('versionDetailsContent').innerHTML = content;
+            new bootstrap.Modal(document.getElementById('versionDetailsModal')).show();
+        })
+        .catch(error => {
+            console.error('Error fetching activity details:', error);
+            alert('Error loading activity details');
+        });
 }
 </script>
 @endsection
