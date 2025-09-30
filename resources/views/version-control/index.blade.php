@@ -1,16 +1,16 @@
 @extends('layouts.layoutMaster')
 
-@section('title', 'Version Control Dashboard')
+@section('title', __('Version Control') . ' Dashboard')
 
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
-        <h4 class="mb-1 mt-3">Version Control</h4>
-        <p class="text-muted">Advanced audit trails and data restoration system</p>
+        <h4 class="mb-1 mt-3">{{ __('Version Control') }}</h4>
+        <p class="text-muted">{{ __('Advanced audit trails and data restoration system') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.audit.index') }}" class="btn btn-primary">
-            <i class="ti ti-history me-1"></i>View Audit Trail
+            <i class="ti ti-history me-1"></i>{{ __('View Audit Trail') }}
         </a>
     </div>
 </div>
@@ -27,11 +27,11 @@
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">Total Activities</span>
+                <span class="fw-semibold d-block mb-1">{{ __('Total Activities') }}</span>
                 <h3 class="card-title mb-2">{{ number_format($stats['total_activities']) }}</h3>
                 <small class="text-success fw-semibold">
                     <i class="ti ti-chevron-up"></i>
-                    +{{ number_format($stats['today_activities']) }} today
+                    +{{ number_format($stats['today_activities']) }} {{ __('Today') }}
                 </small>
             </div>
         </div>
@@ -47,9 +47,9 @@
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">Tracked Models</span>
+                <span class="fw-semibold d-block mb-1">{{ __('Tracked Models') }}</span>
                 <h3 class="card-title mb-2">{{ number_format($stats['tracked_models']) }}</h3>
-                <small class="text-muted">Different model types</small>
+                <small class="text-muted">{{ __('Different model types') }}</small>
             </div>
         </div>
     </div>
@@ -64,9 +64,9 @@
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">Active Users</span>
+                <span class="fw-semibold d-block mb-1">{{ __('Active Users') }}</span>
                 <h3 class="card-title mb-2">{{ number_format($stats['active_users']) }}</h3>
-                <small class="text-muted">Making changes</small>
+                <small class="text-muted">{{ __('Making changes') }}</small>
             </div>
         </div>
     </div>
