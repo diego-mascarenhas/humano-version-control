@@ -69,7 +69,7 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">{{ __('Activity History') }}</h5>
-        <span class="badge bg-primary">{{ $activities->total() }} Activities</span>
+        <span class="badge bg-primary">{{ $activities->total() }} {{ __('Activities') }}</span>
     </div>
     <div class="card-body">
         @if($activities->count() > 0)
@@ -102,7 +102,7 @@
                                     <small class="text-muted">
                                         {{ $activity->created_at->format('M d, Y H:i:s') }}
                                         ({{ $activity->created_at->diffForHumans() }})
-                                        by {{ $activity->causer ? $activity->causer->name : 'System' }}
+                                        {{ __('by') }} {{ $activity->causer ? $activity->causer->name : __('System') }}
                                     </small>
                                 </div>
                                 <div class="d-flex gap-2">
@@ -125,16 +125,16 @@
 
                                     @if(count($attributes) > 0)
                                         <div class="mt-3">
-                                            <strong>Changes:</strong>
+                                            <strong>{{ __('Changes') }}:</strong>
                                             <div class="table-responsive mt-2">
                                                 <table class="table table-sm">
                                                     <thead>
                                                         <tr>
-                                                            <th>Field</th>
+                                                            <th>{{ __('Field') }}</th>
                                                             @if(count($old) > 0)
-                                                                <th>Old Value</th>
+                                                                <th>{{ __('Old Value') }}</th>
                                                             @endif
-                                                            <th>New Value</th>
+                                                            <th>{{ __('New Value') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -155,7 +155,7 @@
                                                                                     {{ $old[$field] }}
                                                                                 @endif
                                                                             @else
-                                                                                <em>not set</em>
+                                                                                <em>{{ __('not set') }}</em>
                                                                             @endif
                                                                         </span>
                                                                     </td>

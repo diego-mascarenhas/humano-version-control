@@ -45,7 +45,7 @@
                 <strong>Member since:</strong> {{ $userModel->created_at->format('M d, Y') }}
             </div>
             <div class="col-md-5">
-                <strong>Total Activities:</strong> {{ $activities->total() }}<br>
+                <strong>{{ __('Total Activities') }}:</strong> {{ $activities->total() }}<br>
                 <strong>Roles:</strong>
                 @if($userModel->roles->count() > 0)
                     @foreach($userModel->roles as $role)
@@ -66,8 +66,8 @@
 <!-- Activity Timeline -->
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Activity Timeline</h5>
-        <span class="badge bg-primary">{{ $activities->total() }} Activities</span>
+        <h5 class="card-title mb-0">{{ __('Activity Timeline') }}</h5>
+        <span class="badge bg-primary">{{ $activities->total() }} {{ __('Activities') }}</span>
     </div>
     <div class="card-body">
         @if($activities->count() > 0)
