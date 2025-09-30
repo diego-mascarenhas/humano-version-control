@@ -1,0 +1,85 @@
+{
+    "name": "idoneo/humano-version-control",
+    "description": "Advanced version control and audit system with restoration capabilities",
+    "keywords": [
+        "idoneo",
+        "laravel",
+        "humano-version-control",
+        "audit",
+        "version-control",
+        "activity-log",
+        "restoration"
+    ],
+    "homepage": "https://github.com/diego-mascarenhas/humano-version-control",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Diego Adrián Mascarenhas Goytía",
+            "email": "diego.mascarenhas@icloud.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/contracts": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0",
+        "spatie/laravel-package-tools": "^1.16",
+        "spatie/laravel-activitylog": "^4.10",
+        "yajra/laravel-datatables-oracle": "^10.11 || ^11.0 || ^12.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.14",
+        "nunomaduro/collision": "^7.0 || ^8.0 || ^9.0",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "pestphp/pest": "^2.0 || ^3.0 || ^4.0",
+        "pestphp/pest-plugin-arch": "^2.0 || ^3.0 || ^4.0",
+        "pestphp/pest-plugin-laravel": "^2.0 || ^3.0 || ^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "spatie/laravel-ray": "^1.35"
+    },
+    "autoload": {
+        "psr-4": {
+            "Idoneo\\HumanoVersionControl\\": "src/",
+            "Idoneo\\HumanoVersionControl\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Idoneo\\HumanoVersionControl\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "App\\": "tests/Fixtures/App/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Idoneo\\HumanoVersionControl\\HumanoVersionControlServiceProvider"
+            ],
+            "aliases": {
+                "HumanoVersionControl": "Idoneo\\HumanoVersionControl\\Facades\\HumanoVersionControl"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": {
+    }
+}
