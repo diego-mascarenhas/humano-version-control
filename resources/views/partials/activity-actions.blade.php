@@ -17,7 +17,5 @@
         @endcan
     @endif
 
-    <a href="#" class="text-info" onclick="showActivityDetails({{ $activity->id }})" title="Show Changes">
-        <i class="ti ti-list-details ti-sm"></i>
-    </a>
+    {{-- Show Changes button removed as requested --}}
 </div>

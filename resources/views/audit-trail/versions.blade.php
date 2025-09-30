@@ -100,19 +100,7 @@
                                     @endif
                                 @endif
 
-                                @can('restore-versions')
-                                    @if($index !== 0)
-                                        <div class="d-flex justify-content-center">
-                                            <a href="{{ route('version-control.restore.preview', [
-                                                'model' => $model,
-                                                'id' => $subject->id,
-                                                'version' => $activity->id
-                                            ]) }}" class="btn btn-sm btn-success">
-                                                <i class="ti ti-restore me-1"></i>Restore
-                                            </a>
-                                        </div>
-                                    @endif
-                                @endcan
+                                {{-- Restore button removed as requested --}}
                             </div>
                         </div>
                     </div>
