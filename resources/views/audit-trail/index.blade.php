@@ -72,8 +72,8 @@
                 <button type="submit" class="btn btn-primary me-2">
                     <i class="ti ti-filter me-1"></i>{{ __('Filter') }}
                 </button>
-                <button type="button" id="clear-filters" class="btn btn-outline-secondary">
-                    <i class="ti ti-x me-1"></i>{{ __('Clear') }}
+                <button class="btn btn-outline-secondary ms-2 waves-effect" id="clear-filters" style="height: 40px;" title="Limpiar filtros">
+                    <i class="ti ti-refresh"></i>
                 </button>
             </div>
         </form>
@@ -147,7 +147,10 @@ $(document).ready(function() {
 
     // Initialize date pickers
     $('#date-from, #date-to').flatpickr({
-        dateFormat: 'Y-m-d'
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        allowInput: true
     });
 });
 </script>

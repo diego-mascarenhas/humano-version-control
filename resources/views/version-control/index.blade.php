@@ -109,9 +109,6 @@
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 class="card-title m-0">{{ __('Recent Activity') }}</h5>
-                <a href="{{ route('version-control.audit.index') }}" class="btn btn-sm btn-outline-primary">
-                    {{ __('View All') }}
-                </a>
             </div>
             <div class="card-body">
                 @if($recentActivity->count() > 0)
