@@ -2,6 +2,47 @@
 
 All notable changes to `humano-version-control` will be documented in this file.
 
+## [1.4.0] - 2025-10-01
+
+### Added
+- **SweetAlert2 Integration**: Replaced native confirm dialogs with elegant SweetAlert2 modals
+- **Enhanced Icon System**: Improved activity icons with proper mapping for restored activities
+- **Rotation Icon**: Added `ti-rotate-clockwise` icon for restoration activities (circle with arrow)
+- **Delete Functionality**: Added ability to delete actual records from "created" activity events
+- **Comprehensive Styling**: Applied consistent button styling across all views
+
+### Fixed
+- Fixed missing icons for "Record restored from version..." activities
+- Fixed SweetAlert2 loading and fallback to native dialogs when unavailable
+- Fixed icon mapping to detect "record restored" text patterns
+- Fixed button cursor pointer issues with `!important` flag
+- Fixed breadcrumb spacing (removed spaces around `/`)
+
+### Improved
+- **Timeline CSS**: Clean single-line timeline connector in activity views
+- **Button Consistency**: All "Volver" (Back) buttons now use `btn-label-secondary` style
+- **Date Pickers**: Standardized Flatpickr configuration across all views
+- **Activity Icons**: Dynamic icon assignment based on activity description content
+- **User Experience**: Smooth confirmation flows with success/error feedback
+- **Visual Hierarchy**: Proper icon colors and backgrounds for different activity types
+
+### Enhanced
+- **Restoration Flow**: Complete SweetAlert2 integration with automatic redirection
+- **Activity Detection**: Robust pattern matching for Spanish and English activity descriptions
+- **Error Handling**: Graceful fallbacks when SweetAlert2 is not available
+- **Icon Mapping**: Support for `created`, `updated`, `deleted`, `restored`, `login`, `logout` activities
+
+### UI/UX
+- **Consistent Icons**: 
+  - 🟢 `ti-plus` (green) for created activities
+  - 🔵 `ti-edit` (blue) for updated activities  
+  - 🔴 `ti-trash` (red) for deleted activities
+  - 🔄 `ti-rotate-clockwise` (blue) for restored activities
+  - ⚠️ `ti-login` (yellow) for login activities
+  - ⚪ `ti-logout` (gray) for logout activities
+- **Modern Dialogs**: SweetAlert2 with custom button styling matching system theme
+- **Responsive Design**: Improved layout consistency across desktop and mobile
+
 ## [1.3.2] - 2025-10-01
 
 ### Added
