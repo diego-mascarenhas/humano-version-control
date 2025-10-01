@@ -2,6 +2,14 @@
 
 @section('title', __('Restore Preview'))
 
+@section('vendor-style')
+<link rel="stylesheet" href="{{asset('assets/vendor/libs/sweetalert2/sweetalert2.css')}}" />
+@endsection
+
+@section('vendor-script')
+<script src="{{asset('assets/vendor/libs/sweetalert2/sweetalert2.js')}}"></script>
+@endsection
+
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
@@ -162,6 +170,13 @@
 @section('page-script')
 <script>
 $(document).ready(function() {
+    // Test SweetAlert2
+    console.log('SweetAlert2 loaded:', typeof Swal !== 'undefined');
+    
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+    }
+    
     // Handle select all/none buttons
     $('#select-all').click(function() {
         $('.field-checkbox').prop('checked', true);
@@ -202,17 +217,93 @@ $(document).ready(function() {
 
     // Handle form submission
     $('#restore-form').on('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        
+        // Verificar SweetAlert2
+        if (typeof Swal === 'undefined') {
+            alert('SweetAlert2 no está disponible. Usando confirm nativo.');
+            const selectedFields = $('.field-checkbox:checked').length;
+            if (selectedFields === 0) {
+                alert('Por favor selecciona al menos un campo para restaurar');
+                return false;
+            }
+            if (!confirm(`¿Estás seguro de que quieres restaurar ${selectedFields} campo(s)? Esta acción no se puede deshacer.`)) {
+                return false;
+            }
+            form.submit();
+            return;
+        }
+        
         const selectedFields = $('.field-checkbox:checked').length;
         if (selectedFields === 0) {
-            e.preventDefault();
-            alert('Please select at least one field to restore');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sin campos seleccionados',
+                text: 'Por favor selecciona al menos un campo para restaurar',
+                customClass: {
+                    confirmButton: 'btn btn-warning waves-effect waves-light'
+                },
+                buttonsStyling: false
+            });
             return false;
         }
 
-        if (!confirm(`Are you sure you want to restore ${selectedFields} field(s)? This action cannot be undone.`)) {
-            e.preventDefault();
-            return false;
-        }
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: `¿Deseas restaurar ${selectedFields} campo(s)? Esta acción no se puede deshacer.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, restaurar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'btn btn-primary me-3 waves-effect waves-light',
+                cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        }).then(function (result) {
+            if (result.value) {
+                // Submit form
+                $.post(form.action, $(form).serialize())
+                    .done(function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Restaurado!',
+                                text: response.message || 'Los campos han sido restaurados exitosamente',
+                                customClass: {
+                                    confirmButton: 'btn btn-success waves-effect waves-light'
+                                },
+                                buttonsStyling: false
+                            }).then(() => {
+                                // Redirect to audit trail
+                                window.location.href = '{{ route("version-control.audit.show", ["model" => $model, "id" => $subject->id]) }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Ocurrió un error durante la restauración',
+                                customClass: {
+                                    confirmButton: 'btn btn-danger waves-effect waves-light'
+                                },
+                                buttonsStyling: false
+                            });
+                        }
+                    })
+                    .fail(function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al restaurar campos. Por favor intenta de nuevo.',
+                            customClass: {
+                                confirmButton: 'btn btn-danger waves-effect waves-light'
+                            },
+                            buttonsStyling: false
+                        });
+                    });
+            }
+        });
     });
 });
 </script>
