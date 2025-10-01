@@ -103,8 +103,8 @@
                                     $actionConfig = ['icon' => 'edit', 'color' => 'primary'];
                                 } elseif (str_contains($description, 'eliminado') || str_contains($description, 'deleted')) {
                                     $actionConfig = ['icon' => 'trash', 'color' => 'danger'];
-                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored')) {
-                                    $actionConfig = ['icon' => 'restore', 'color' => 'info'];
+                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored') || str_contains($description, 'record restored')) {
+                                    $actionConfig = ['icon' => 'rotate-clockwise', 'color' => 'info'];
                                 } elseif (str_contains($description, 'logged in') || str_contains($description, 'login')) {
                                     $actionConfig = ['icon' => 'login', 'color' => 'warning'];
                                 } elseif (str_contains($description, 'logged out') || str_contains($description, 'logout')) {
