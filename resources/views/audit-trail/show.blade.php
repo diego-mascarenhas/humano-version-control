@@ -94,20 +94,18 @@
                     <div class="timeline-item">
                         <div class="timeline-marker">
                             @php
-                                // Mapeo mejorado que detecta palabras clave en la descripción
-                                $description = strtolower($activity->description);
-                                
-                                if (str_contains($description, 'creado') || str_contains($description, 'created')) {
+                                // Mapeo usando principalmente el campo event
+                                if ($activity->event === 'created') {
                                     $actionConfig = ['icon' => 'plus', 'color' => 'success'];
-                                } elseif (str_contains($description, 'actualizado') || str_contains($description, 'updated')) {
+                                } elseif ($activity->event === 'updated') {
                                     $actionConfig = ['icon' => 'edit', 'color' => 'primary'];
-                                } elseif (str_contains($description, 'eliminado') || str_contains($description, 'deleted')) {
+                                } elseif ($activity->event === 'deleted') {
                                     $actionConfig = ['icon' => 'trash', 'color' => 'danger'];
-                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored') || str_contains($description, 'record restored')) {
+                                } elseif (str_contains(strtolower($activity->description), 'restored') || str_contains(strtolower($activity->description), 'record restored')) {
                                     $actionConfig = ['icon' => 'rotate-clockwise', 'color' => 'info'];
-                                } elseif (str_contains($description, 'logged in') || str_contains($description, 'login')) {
+                                } elseif (str_contains(strtolower($activity->description), 'logged in') || str_contains(strtolower($activity->description), 'login')) {
                                     $actionConfig = ['icon' => 'login', 'color' => 'warning'];
-                                } elseif (str_contains($description, 'logged out') || str_contains($description, 'logout')) {
+                                } elseif (str_contains(strtolower($activity->description), 'logged out') || str_contains(strtolower($activity->description), 'logout')) {
                                     $actionConfig = ['icon' => 'logout', 'color' => 'secondary'];
                                 } else {
                                     $actionConfig = ['icon' => 'activity', 'color' => 'info'];
@@ -132,20 +130,20 @@
                                         {{ __('by') }} {{ $activity->causer ? $activity->causer->name : __('System') }}
                                     </small>
                                 </div>
-                                <div class="d-flex gap-2">
-                                    @php
-                                        // Check if this is a "created" event - could be "created", "Colaborador creado", etc.
-                                        $isCreatedEvent = str_contains(strtolower($activity->description), 'creado') || 
-                                                         str_contains(strtolower($activity->description), 'created');
-                                    @endphp
-                                    
-                                    @if($isCreatedEvent && auth()->user()->can('version-control.audit'))
-                                        <button class="btn btn-sm btn-outline-danger"
-                                                onclick="deleteActivity({{ $activity->id }}, this)"
-                                                title="Eliminar registro del sistema">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
-                                    @endif
+                        <div class="d-flex gap-2">
+                            @php
+                                // Check if this is a "created" event using only the event field
+                                $isCreatedEvent = ($activity->event === 'created');
+                                $isAdmin = auth()->user()->hasRole('admin');
+                            @endphp
+                            
+                            @if($isCreatedEvent && $isAdmin)
+                                <button class="btn btn-sm btn-outline-danger"
+                                        onclick="deleteActivity({{ $activity->id }}, this)"
+                                        title="Eliminar registro del sistema">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            @endif
                                     <button class="btn btn-sm btn-outline-primary"
                                             onclick="toggleDetails({{ $activity->id }})"
                                             title="Show/hide details">

@@ -119,13 +119,16 @@ $(document).ready(function() {
             { data: 'model_name', name: 'subject_type' },
             { data: 'subject_name', name: 'subject_id' },
             { data: 'description', name: 'description' },
-            { data: 'causer_name', name: 'causer.name' },
+            { data: 'causer_name', name: 'causer_name', orderable: false },
             { data: 'created_at', name: 'created_at' },
             { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center' }
         ],
         order: [[4, 'desc']],
         pageLength: 25,
-        responsive: true
+        responsive: true,
+        language: {
+            url: '/js/datatables/{{ session()->get("locale", app()->getLocale()) }}.json'
+        }
     });
 
     // Handle filters

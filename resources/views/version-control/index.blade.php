@@ -115,20 +115,18 @@
                     <div class="list-group list-group-flush">
                         @foreach($recentActivity as $activity)
                             @php
-                                // Mapeo mejorado que detecta palabras clave en la descripción
-                                $description = strtolower($activity->description);
-                                
-                                if (str_contains($description, 'creado') || str_contains($description, 'created')) {
+                                // Mapeo usando principalmente el campo event
+                                if ($activity->event === 'created') {
                                     $actionConfig = ['icon' => 'plus', 'color' => 'success', 'bg' => 'bg-label-success'];
-                                } elseif (str_contains($description, 'actualizado') || str_contains($description, 'updated')) {
+                                } elseif ($activity->event === 'updated') {
                                     $actionConfig = ['icon' => 'edit', 'color' => 'primary', 'bg' => 'bg-label-primary'];
-                                } elseif (str_contains($description, 'eliminado') || str_contains($description, 'deleted')) {
+                                } elseif ($activity->event === 'deleted') {
                                     $actionConfig = ['icon' => 'trash', 'color' => 'danger', 'bg' => 'bg-label-danger'];
-                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored') || str_contains($description, 'record restored')) {
+                                } elseif (str_contains(strtolower($activity->description), 'restored') || str_contains(strtolower($activity->description), 'record restored')) {
                                     $actionConfig = ['icon' => 'rotate-clockwise', 'color' => 'info', 'bg' => 'bg-label-info'];
-                                } elseif (str_contains($description, 'logged in') || str_contains($description, 'login')) {
+                                } elseif (str_contains(strtolower($activity->description), 'logged in') || str_contains(strtolower($activity->description), 'login')) {
                                     $actionConfig = ['icon' => 'login', 'color' => 'warning', 'bg' => 'bg-label-warning'];
-                                } elseif (str_contains($description, 'logged out') || str_contains($description, 'logout')) {
+                                } elseif (str_contains(strtolower($activity->description), 'logged out') || str_contains(strtolower($activity->description), 'logout')) {
                                     $actionConfig = ['icon' => 'logout', 'color' => 'secondary', 'bg' => 'bg-label-secondary'];
                                 } else {
                                     $actionConfig = ['icon' => 'activity', 'color' => 'secondary', 'bg' => 'bg-label-secondary'];

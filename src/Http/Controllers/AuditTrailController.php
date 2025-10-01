@@ -271,6 +271,12 @@ class AuditTrailController extends Controller
                 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'Spanish_Spain', 'Spanish');
                 return $activity->created_at->format('d/m/Y H:i:s');
             })
+            ->filterColumn('causer_name', function($query, $keyword) {
+                // Allow filtering by causer name
+                $query->whereHas('causer', function($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
             ->rawColumns(['actions'])
             ->make(true);
     }
@@ -287,16 +293,15 @@ class AuditTrailController extends Controller
                 return response()->json(['error' => 'Activity not found'], 404);
             }
 
-            // Check if this is a "created" event - could be "created", "Colaborador creado", etc.
-            $isCreatedEvent = str_contains(strtolower($activity->description), 'creado') || 
-                             str_contains(strtolower($activity->description), 'created');
+            // Check if this is a "created" event using only the event field
+            $isCreatedEvent = ($activity->event === 'created');
 
             if (!$isCreatedEvent) {
                 return response()->json(['error' => 'Only created events can be deleted'], 403);
             }
 
-            // Check permissions
-            if (!auth()->user()->can('version-control.audit')) {
+            // Check permissions - only admin can delete
+            if (!auth()->user()->hasRole('admin')) {
                 return response()->json(['error' => 'Insufficient permissions'], 403);
             }
 
