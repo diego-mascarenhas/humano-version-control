@@ -17,73 +17,87 @@
 
 <!-- Stats Cards -->
 <div class="row g-4 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial bg-primary rounded">
-                            <i class="ti ti-activity"></i>
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span>Actividades</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">{{ number_format($stats['total_activities']) }}</h3>
+                            <p class="text-success mb-0">(100%)</p>
+                        </div>
+                        <p class="mb-0">Total de Actividades</p>
+                    </div>
+                    <div class="avatar">
+                        <div class="avatar-initial rounded bg-label-primary">
+                            <i class="ti ti-activity ti-sm"></i>
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">{{ __('Total Activities') }}</span>
-                <h3 class="card-title mb-2">{{ number_format($stats['total_activities']) }}</h3>
-                <small class="text-success fw-semibold">
-                    <i class="ti ti-chevron-up"></i>
-                    +{{ number_format($stats['today_activities']) }} {{ __('Today') }}
-                </small>
             </div>
         </div>
     </div>
-
-    <div class="col-6 col-md-3">
+    <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial bg-success rounded">
-                            <i class="ti ti-database"></i>
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span>Hoy</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">{{ number_format($stats['today_activities']) }}</h3>
+                            <p class="text-warning mb-0">({{ $stats['total_activities'] > 0 ? round(($stats['today_activities'] / $stats['total_activities']) * 100) : 0 }}%)</p>
+                        </div>
+                        <p class="mb-0">Realizados hoy</p>
+                    </div>
+                    <div class="avatar">
+                        <div class="avatar-initial rounded bg-label-warning">
+                            <i class="ti ti-clock ti-sm"></i>
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">{{ __('Tracked Models') }}</span>
-                <h3 class="card-title mb-2">{{ number_format($stats['tracked_models']) }}</h3>
-                <small class="text-muted">{{ __('Different model types') }}</small>
             </div>
         </div>
     </div>
-
-    <div class="col-6 col-md-3">
+    <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial bg-info rounded">
-                            <i class="ti ti-users"></i>
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span>Modelos</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">{{ number_format($stats['tracked_models']) }}</h3>
+                            <p class="text-info mb-0">(100%)</p>
+                        </div>
+                        <p class="mb-0">Modelos Rastreados</p>
+                    </div>
+                    <div class="avatar">
+                        <div class="avatar-initial rounded bg-label-info">
+                            <i class="ti ti-database ti-sm"></i>
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">{{ __('Active Users') }}</span>
-                <h3 class="card-title mb-2">{{ number_format($stats['active_users']) }}</h3>
-                <small class="text-muted">{{ __('Making changes') }}</small>
             </div>
         </div>
     </div>
-
-    <div class="col-6 col-md-3">
+    <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                    <div class="avatar flex-shrink-0">
-                        <div class="avatar-initial bg-warning rounded">
-                            <i class="ti ti-clock"></i>
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span>Usuarios</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">{{ number_format($stats['active_users']) }}</h3>
+                            <p class="text-success mb-0">(100%)</p>
+                        </div>
+                        <p class="mb-0">Usuarios Activos</p>
+                    </div>
+                    <div class="avatar">
+                        <div class="avatar-initial rounded bg-label-success">
+                            <i class="ti ti-users ti-sm"></i>
                         </div>
                     </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">{{ __('Today') }}</span>
-                <h3 class="card-title mb-2">{{ number_format($stats['today_activities']) }}</h3>
-                <small class="text-muted">{{ __('Activities recorded') }}</small>
             </div>
         </div>
     </div>
