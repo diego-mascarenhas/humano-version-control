@@ -2,6 +2,30 @@
 
 All notable changes to `humano-version-control` will be documented in this file.
 
+## [1.4.1] - 2025-10-01
+
+### Added
+- **SweetAlert2 for Delete Actions**: Replaced native confirm dialogs with elegant SweetAlert2 modals for delete functionality
+- **Intelligent Delete Button**: Button only appears when record exists and user has admin permissions
+- **Enhanced Error Handling**: Detailed debug information for troubleshooting delete operations
+
+### Fixed
+- Fixed missing SweetAlert2 dependencies in audit trail detail view
+- Fixed delete button appearing for non-existent records (now hidden automatically)
+- Fixed generic error messages with detailed debug information
+- Fixed "View Versions" button appearing when only one activity exists
+
+### Improved
+- **Smart UI Logic**: Delete button only shows for existing records with 'created' events
+- **Better UX**: No more confusing buttons that lead to errors
+- **Debug Information**: Comprehensive error details for administrators
+- **Consistent Styling**: SweetAlert2 matches system design with custom button classes
+
+### Enhanced
+- **Conditional Rendering**: "View Versions" button hidden when `$activities->total() <= 1`
+- **Error Prevention**: Proactive UI that prevents user errors before they happen
+- **Admin Experience**: Clear feedback and appropriate actions based on record state
+
 ## [1.4.0] - 2025-10-01
 
 ### Added

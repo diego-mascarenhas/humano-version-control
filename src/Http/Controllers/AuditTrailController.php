@@ -297,19 +297,28 @@ class AuditTrailController extends Controller
             $isCreatedEvent = ($activity->event === 'created');
 
             if (!$isCreatedEvent) {
-                return response()->json(['error' => 'Only created events can be deleted'], 403);
+                return response()->json([
+                    'error' => 'Only created events can be deleted', 
+                    'debug' => 'Event type: ' . $activity->event
+                ], 403);
             }
 
             // Check permissions - only admin can delete
             if (!auth()->user()->hasRole('admin')) {
-                return response()->json(['error' => 'Insufficient permissions'], 403);
+                return response()->json([
+                    'error' => 'Insufficient permissions',
+                    'debug' => 'User roles: ' . implode(', ', auth()->user()->roles->pluck('name')->toArray())
+                ], 403);
             }
 
             // Get the actual record that was created
             $subject = $activity->subject;
             
             if (!$subject) {
-                return response()->json(['error' => 'Record no longer exists'], 404);
+                return response()->json([
+                    'error' => 'Record no longer exists',
+                    'debug' => 'Subject type: ' . $activity->subject_type . ', ID: ' . $activity->subject_id
+                ], 404);
             }
 
             // Delete the actual record (this will also create a "deleted" activity log)
@@ -326,7 +335,12 @@ class AuditTrailController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to delete record: ' . $e->getMessage()
+                'error' => 'Failed to delete record: ' . $e->getMessage(),
+                'debug' => [
+                    'activity_id' => $activityId,
+                    'exception' => $e->getFile() . ':' . $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
             ], 500);
         }
     }

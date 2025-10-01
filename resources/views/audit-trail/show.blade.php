@@ -5,10 +5,12 @@
 @section('vendor-style')
 <link rel="stylesheet" href="{{asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
 <link rel="stylesheet" href="{{asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
+<link rel="stylesheet" href="{{asset('assets/vendor/libs/sweetalert2/sweetalert2.css')}}" />
 @endsection
 
 @section('vendor-script')
 <script src="{{asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
+<script src="{{asset('assets/vendor/libs/sweetalert2/sweetalert2.js')}}"></script>
 @endsection
 
 @section('content')
@@ -25,7 +27,7 @@
         <p class="text-muted">{{ __('Complete activity history for this record') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
-        @if($subject)
+        @if($subject && $activities->total() > 1)
             <a href="{{ route('version-control.audit.versions', ['model' => $modelSlug, 'id' => $subject->id]) }}" class="btn btn-primary">
                 <i class="ti ti-versions me-1"></i>{{ __('View Versions') }}
             </a>
@@ -135,9 +137,10 @@
                                 // Check if this is a "created" event using only the event field
                                 $isCreatedEvent = ($activity->event === 'created');
                                 $isAdmin = auth()->user()->hasRole('admin');
+                                $recordExists = $activity->subject !== null;
                             @endphp
                             
-                            @if($isCreatedEvent && $isAdmin)
+                            @if($isCreatedEvent && $isAdmin && $recordExists)
                                 <button class="btn btn-sm btn-outline-danger"
                                         onclick="deleteActivity({{ $activity->id }}, this)"
                                         title="Eliminar registro del sistema">
@@ -258,37 +261,117 @@ function toggleDetails(activityId) {
 
 // Delete activity function
 function deleteActivity(activityId, element) {
-    if (confirm('¿Estás seguro de que quieres eliminar este registro? Esto eliminará el registro real del sistema (no solo la actividad de auditoría). Esta acción no se puede deshacer.')) {
-        // Show loading state
-        element.disabled = true;
-        element.innerHTML = '<i class="ti ti-loader ti-sm"></i>';
-        
-        fetch(`/version-control/api/activity/${activityId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Remove the activity from DOM
-                element.closest('.timeline-item').remove();
-                alert('Registro eliminado correctamente: ' + data.message);
-            } else {
-                alert('Error: ' + data.message);
+    // Verificar que SweetAlert2 esté disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado');
+        if (confirm('¿Estás seguro de que quieres eliminar este registro? Esto eliminará el registro real del sistema (no solo la actividad de auditoría). Esta acción no se puede deshacer.')) {
+            // Fallback usando fetch directo
+            element.disabled = true;
+            element.innerHTML = '<i class="ti ti-loader ti-sm"></i>';
+            
+            fetch(`/version-control/api/activity/${activityId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registro eliminado correctamente: ' + data.message);
+                    window.location.href = '/version-control/audit';
+                } else {
+                    alert('Error: ' + data.message);
+                    element.disabled = false;
+                    element.innerHTML = '<i class="ti ti-trash"></i>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el registro');
                 element.disabled = false;
                 element.innerHTML = '<i class="ti ti-trash"></i>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar el registro');
-            element.disabled = false;
-            element.innerHTML = '<i class="ti ti-trash"></i>';
-        });
+            });
+        }
+        return;
     }
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Estás seguro de que quieres eliminar este registro? Esto eliminará el registro real del sistema (no solo la actividad de auditoría). Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            confirmButton: 'btn btn-danger me-3 waves-effect waves-light',
+            cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+        },
+        buttonsStyling: false
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            // Show loading state
+            element.disabled = true;
+            element.innerHTML = '<i class="ti ti-loader ti-sm"></i>';
+            
+            fetch(`/version-control/api/activity/${activityId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: data.message,
+                        customClass: {
+                            confirmButton: 'btn btn-success waves-effect waves-light'
+                        },
+                        buttonsStyling: false
+                    }).then(() => {
+                        // Remove the activity from DOM and redirect
+                        element.closest('.timeline-item').remove();
+                        // Redirect to main audit page
+                        window.location.href = '/version-control/audit';
+                    });
+                } else {
+                    console.error('Delete error:', data);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Error al eliminar el registro',
+                        footer: data.debug ? `Debug: ${JSON.stringify(data.debug)}` : '',
+                        customClass: {
+                            confirmButton: 'btn btn-danger waves-effect waves-light'
+                        },
+                        buttonsStyling: false
+                    });
+                    element.disabled = false;
+                    element.innerHTML = '<i class="ti ti-trash"></i>';
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Red',
+                    text: 'Error de conexión al eliminar el registro',
+                    footer: `Detalles: ${error.message}`,
+                    customClass: {
+                        confirmButton: 'btn btn-danger waves-effect waves-light'
+                    },
+                    buttonsStyling: false
+                });
+                element.disabled = false;
+                element.innerHTML = '<i class="ti ti-trash"></i>';
+            });
+        }
+    });
 }
 </script>
 
