@@ -6,14 +6,14 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">{{ __('Version Control') }} /</span>
+            <span class="text-muted fw-light">{{ __('Version Control') }}/</span>
             {{ __('Restore') }} {{ class_basename($activity->subject_type) }}
         </h4>
         <p class="text-muted">{{ __('Preview and restore from version :date', ['date' => $activity->created_at->format('M d, Y H:i:s')]) }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
-        <a href="{{ route('version-control.audit.show', ['model' => $model, 'id' => $subject->id]) }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to History') }}
+        <a href="{{ route('version-control.audit.show', ['model' => $model, 'id' => $subject->id]) }}" class="btn btn-label-secondary waves-effect" style="cursor: pointer !important;">
+            <i class="ti ti-arrow-left me-1"></i>Volver
         </a>
     </div>
 </div>

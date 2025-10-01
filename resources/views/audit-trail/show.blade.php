@@ -15,7 +15,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">{{ __('Version Control') }} / {{ __('Audit') }} /</span>
+            <span class="text-muted fw-light">{{ __('Version Control') }}/{{ __('Audit') }}/</span>
             @if($subject)
                 {{ class_basename($subject) }} #{{ $subject->id }}
             @else
@@ -25,15 +25,15 @@
         <p class="text-muted">{{ __('Complete activity history for this record') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
-        <a href="{{ route('version-control.audit.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Audit Trail') }}
-        </a>
-
         @if($subject)
             <a href="{{ route('version-control.audit.versions', ['model' => $modelSlug, 'id' => $subject->id]) }}" class="btn btn-primary">
                 <i class="ti ti-versions me-1"></i>{{ __('View Versions') }}
             </a>
         @endif
+        
+        <a href="{{ route('version-control.audit.index') }}" class="btn btn-label-secondary waves-effect" style="cursor: pointer !important;">
+            <i class="ti ti-arrow-left me-1"></i>Volver
+        </a>
     </div>
 </div>
 

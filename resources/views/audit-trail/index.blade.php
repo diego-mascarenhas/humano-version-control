@@ -23,8 +23,8 @@
         <p class="text-muted">{{ __('Complete history of all system changes') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
-        <a href="{{ route('version-control.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Dashboard') }}
+        <a href="{{ route('version-control.index') }}" class="btn btn-label-secondary waves-effect" style="cursor: pointer !important;">
+            <i class="ti ti-arrow-left me-1"></i>Volver
         </a>
     </div>
 </div>

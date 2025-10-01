@@ -6,14 +6,14 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">Version Control / User Activity /</span>
+            <span class="text-muted fw-light">Version Control/User Activity/</span>
             {{ $userModel->name }}
         </h4>
         <p class="text-muted">All activities performed by this user</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
-        <a href="{{ route('version-control.audit.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Audit Trail
+        <a href="{{ route('version-control.audit.index') }}" class="btn btn-label-secondary waves-effect" style="cursor: pointer !important;">
+            <i class="ti ti-arrow-left me-1"></i>Volver
         </a>
     </div>
 </div>
