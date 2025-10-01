@@ -22,8 +22,17 @@ class AuditTrailController extends Controller
 
         // Verificar si el subject existe
         if (!$activity->subject) {
-            // Si el subject fue eliminado, mostrar solo esta actividad
-            $activities = collect([$activity])->paginate(1);
+            // Si el subject fue eliminado, crear un paginator manual para esta actividad
+            $activities = new \Illuminate\Pagination\LengthAwarePaginator(
+                collect([$activity]), // items
+                1, // total
+                20, // per page
+                1, // current page
+                [
+                    'path' => request()->url(),
+                    'pageName' => 'page',
+                ]
+            );
             $subject = null;
             $model = $this->getModelDisplayName($activity->subject_type);
             $modelSlug = strtolower(class_basename($activity->subject_type));
