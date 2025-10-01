@@ -2,6 +2,36 @@
 
 All notable changes to `humano-version-control` will be documented in this file.
 
+## [1.3.0] - 2025-10-01
+
+### Added
+- Complete Spanish and English translations for all UI elements
+- Proper handling of singular/plural forms in Spanish grammar
+- Dynamic model resolution and improved activity logging
+- Enhanced button styling and user experience improvements
+
+### Fixed  
+- Fixed htmlspecialchars() error with stdClass objects in restoration preview
+- Fixed mapWithKeys() error on QueryBuilder in model statistics
+- Fixed route conflicts with dynamic activity routes
+- Fixed activity logging for model updates (was only showing "created" activities)
+- Fixed "View Versions" link passing model display name instead of slug
+- Fixed singular/plural forms: "1 Actividad" not "1 Actividades", "1 Versión" not "1 Versiones"
+
+### Removed
+- Removed non-functional "Audit & Logs" button from DataTables
+- Removed "View Details" buttons from version blocks  
+- Removed specialized restoration activity display (now shows as normal activities)
+- Removed "Restore" buttons from version blocks and activity actions
+- Removed "Show Changes" button from activity actions
+- Removed button styling from activity actions (now show as simple icons)
+
+### Improved
+- Better error handling for object/array values in restoration preview
+- Enhanced UI consistency across all views
+- Improved translation coverage for all user-facing text
+- Better handling of dynamic model classes and activity resolution
+
 ## [1.0.0] - 2025-09-30
 
 ### Added
