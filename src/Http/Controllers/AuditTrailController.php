@@ -254,17 +254,8 @@ class AuditTrailController extends Controller
             ->addColumn('causer_name', function ($activity) {
                 return $activity->causer ? $activity->causer->name : 'System';
             })
-            ->addColumn('changes_summary', function ($activity) {
-                $properties = $activity->properties;
-                if (isset($properties['attributes']) && isset($properties['old'])) {
-                    $changed = array_keys($properties['attributes']);
-                    return implode(', ', array_slice($changed, 0, 3)) .
-                           (count($changed) > 3 ? '...' : '');
-                }
-                return 'N/A';
-            })
             ->addColumn('actions', function ($activity) {
-                $actions = '';
+                $actions = '<div class="d-flex justify-content-center align-items-center">';
 
                 // ✅ ICONO SIN ESTILO DE BOTÓN - Acceso directo por Activity ID
                 $actions .= '<a href="' . route('version-control.activity.show', $activity->id) . '"
@@ -272,13 +263,67 @@ class AuditTrailController extends Controller
                             <i class="ti ti-eye ti-sm me-2"></i>
                             </a>';
 
+                $actions .= '</div>';
                 return $actions;
             })
             ->editColumn('created_at', function ($activity) {
-                return $activity->created_at->format('Y-m-d H:i:s');
+                // Formato de fecha en español
+                setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'Spanish_Spain', 'Spanish');
+                return $activity->created_at->format('d/m/Y H:i:s');
             })
             ->rawColumns(['actions'])
             ->make(true);
+    }
+
+    /**
+     * Delete the actual record (not just the activity log)
+     */
+    public function deleteActivity(Request $request, int $activityId)
+    {
+        try {
+            $activity = Activity::find($activityId);
+            
+            if (!$activity) {
+                return response()->json(['error' => 'Activity not found'], 404);
+            }
+
+            // Check if this is a "created" event - could be "created", "Colaborador creado", etc.
+            $isCreatedEvent = str_contains(strtolower($activity->description), 'creado') || 
+                             str_contains(strtolower($activity->description), 'created');
+
+            if (!$isCreatedEvent) {
+                return response()->json(['error' => 'Only created events can be deleted'], 403);
+            }
+
+            // Check permissions
+            if (!auth()->user()->can('version-control.audit')) {
+                return response()->json(['error' => 'Insufficient permissions'], 403);
+            }
+
+            // Get the actual record that was created
+            $subject = $activity->subject;
+            
+            if (!$subject) {
+                return response()->json(['error' => 'Record no longer exists'], 404);
+            }
+
+            // Delete the actual record (this will also create a "deleted" activity log)
+            $recordName = method_exists($subject, 'name') ? $subject->name : 
+                         (method_exists($subject, 'title') ? $subject->title : 
+                         (isset($subject->id) ? class_basename($subject) . ' #' . $subject->id : 'Record'));
+            
+            $subject->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Record '{$recordName}' deleted successfully"
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to delete record: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

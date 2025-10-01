@@ -90,9 +90,8 @@
                     <th>{{ __('Record') }}</th>
                     <th>{{ __('Action') }}</th>
                     <th>{{ __('User') }}</th>
-                    <th>{{ __('Changes') }}</th>
                     <th>{{ __('Date') }}</th>
-                    <th>{{ __('Actions') }}</th>
+                    <th class="text-center">{{ __('Actions') }}</th>
                 </tr>
             </thead>
         </table>
@@ -121,11 +120,10 @@ $(document).ready(function() {
             { data: 'subject_name', name: 'subject_id' },
             { data: 'description', name: 'description' },
             { data: 'causer_name', name: 'causer.name' },
-            { data: 'changes_summary', name: 'changes_summary', orderable: false },
             { data: 'created_at', name: 'created_at' },
-            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center' }
         ],
-        order: [[5, 'desc']],
+        order: [[4, 'desc']],
         pageLength: 25,
         responsive: true
     });

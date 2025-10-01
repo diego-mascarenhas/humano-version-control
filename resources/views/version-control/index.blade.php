@@ -103,10 +103,30 @@
                 @if($recentActivity->count() > 0)
                     <div class="list-group list-group-flush">
                         @foreach($recentActivity as $activity)
+                            @php
+                                // Mapeo mejorado que detecta palabras clave en la descripción
+                                $description = strtolower($activity->description);
+                                
+                                if (str_contains($description, 'creado') || str_contains($description, 'created')) {
+                                    $actionConfig = ['icon' => 'plus', 'color' => 'success', 'bg' => 'bg-label-success'];
+                                } elseif (str_contains($description, 'actualizado') || str_contains($description, 'updated')) {
+                                    $actionConfig = ['icon' => 'edit', 'color' => 'primary', 'bg' => 'bg-label-primary'];
+                                } elseif (str_contains($description, 'eliminado') || str_contains($description, 'deleted')) {
+                                    $actionConfig = ['icon' => 'trash', 'color' => 'danger', 'bg' => 'bg-label-danger'];
+                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored')) {
+                                    $actionConfig = ['icon' => 'restore', 'color' => 'info', 'bg' => 'bg-label-info'];
+                                } elseif (str_contains($description, 'logged in') || str_contains($description, 'login')) {
+                                    $actionConfig = ['icon' => 'login', 'color' => 'warning', 'bg' => 'bg-label-warning'];
+                                } elseif (str_contains($description, 'logged out') || str_contains($description, 'logout')) {
+                                    $actionConfig = ['icon' => 'logout', 'color' => 'secondary', 'bg' => 'bg-label-secondary'];
+                                } else {
+                                    $actionConfig = ['icon' => 'activity', 'color' => 'secondary', 'bg' => 'bg-label-secondary'];
+                                }
+                            @endphp
                             <div class="list-group-item d-flex align-items-center px-0">
                                 <div class="avatar flex-shrink-0 me-3">
-                                    <div class="avatar-initial bg-label-primary rounded-circle">
-                                        <i class="ti ti-{{ $activity->description === 'created' ? 'plus' : ($activity->description === 'updated' ? 'edit' : 'trash') }}"></i>
+                                    <div class="avatar-initial {{ $actionConfig['bg'] }} rounded-circle">
+                                        <i class="ti ti-{{ $actionConfig['icon'] }} text-{{ $actionConfig['color'] }}"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">

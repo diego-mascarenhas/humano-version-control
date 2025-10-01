@@ -40,6 +40,7 @@ Route::middleware(['web', 'auth'])->prefix('version-control')->name('version-con
 
     // API endpoints - Dinámicos
     Route::get('/api/activities', [AuditTrailController::class, 'activities'])->name('api.activities');
+    Route::delete('/api/activity/{activityId}', [AuditTrailController::class, 'deleteActivity'])->name('api.activity.delete')->where('activityId', '[0-9]+');
     Route::get('/api/activity/{activityId}/versions', [AuditTrailController::class, 'getActivityVersions'])->name('api.activity.versions')->where('activityId', '[0-9]+');
     Route::get('/api/{model}/{id}/versions', [VersionControlController::class, 'getVersions'])->name('api.versions');
 });

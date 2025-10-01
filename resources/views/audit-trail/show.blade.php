@@ -122,7 +122,19 @@
                                     </small>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    {{-- Restore button removed as requested --}}
+                                    @php
+                                        // Check if this is a "created" event - could be "created", "Colaborador creado", etc.
+                                        $isCreatedEvent = str_contains(strtolower($activity->description), 'creado') || 
+                                                         str_contains(strtolower($activity->description), 'created');
+                                    @endphp
+                                    
+                                    @if($isCreatedEvent && auth()->user()->can('version-control.audit'))
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteActivity({{ $activity->id }}, this)"
+                                                title="Eliminar registro del sistema">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    @endif
                                     <button class="btn btn-sm btn-outline-primary"
                                             onclick="toggleDetails({{ $activity->id }})"
                                             title="Show/hide details">
@@ -232,6 +244,41 @@ function toggleDetails(activityId) {
         details.style.display = 'none';
         icon.classList.remove('ti-chevron-up');
         icon.classList.add('ti-chevron-down');
+    }
+}
+
+// Delete activity function
+function deleteActivity(activityId, element) {
+    if (confirm('¿Estás seguro de que quieres eliminar este registro? Esto eliminará el registro real del sistema (no solo la actividad de auditoría). Esta acción no se puede deshacer.')) {
+        // Show loading state
+        element.disabled = true;
+        element.innerHTML = '<i class="ti ti-loader ti-sm"></i>';
+        
+        fetch(`/version-control/api/activity/${activityId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the activity from DOM
+                element.closest('.timeline-item').remove();
+                alert('Registro eliminado correctamente: ' + data.message);
+            } else {
+                alert('Error: ' + data.message);
+                element.disabled = false;
+                element.innerHTML = '<i class="ti ti-trash"></i>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar el registro');
+            element.disabled = false;
+            element.innerHTML = '<i class="ti ti-trash"></i>';
+        });
     }
 }
 </script>
