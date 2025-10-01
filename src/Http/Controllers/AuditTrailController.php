@@ -20,6 +20,24 @@ class AuditTrailController extends Controller
             abort(404, 'Activity not found');
         }
 
+        // Verificar si el subject existe
+        if (!$activity->subject) {
+            // Si el subject fue eliminado, mostrar solo esta actividad
+            $activities = collect([$activity])->paginate(1);
+            $subject = null;
+            $model = $this->getModelDisplayName($activity->subject_type);
+            $modelSlug = strtolower(class_basename($activity->subject_type));
+            $selectedActivity = $activity;
+
+            return view('humano-version-control::audit-trail.show', compact(
+                'subject',
+                'activities', 
+                'model',
+                'modelSlug',
+                'selectedActivity'
+            ));
+        }
+
         // Obtener todas las actividades relacionadas al mismo sujeto
         $relatedActivities = Activity::forSubject($activity->subject)
             ->with('causer')

@@ -1,6 +1,6 @@
 @extends('layouts.layoutMaster')
 
-@section('title', __('Audit Details') . ' - ' . class_basename($subject))
+@section('title', __('Audit Details') . ' - ' . ($subject ? class_basename($subject) : __('Deleted Record')))
 
 @section('vendor-style')
 <link rel="stylesheet" href="{{asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}">
@@ -16,7 +16,11 @@
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
             <span class="text-muted fw-light">{{ __('Version Control') }} / {{ __('Audit') }} /</span>
-            {{ class_basename($subject) }} #{{ $subject->id }}
+            @if($subject)
+                {{ class_basename($subject) }} #{{ $subject->id }}
+            @else
+                <span class="text-danger">{{ __('Deleted Record') }}</span>
+            @endif
         </h4>
         <p class="text-muted">{{ __('Complete activity history for this record') }}</p>
     </div>
@@ -25,9 +29,11 @@
             <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Audit Trail') }}
         </a>
 
-        <a href="{{ route('version-control.audit.versions', ['model' => $modelSlug, 'id' => $subject->id]) }}" class="btn btn-primary">
-            <i class="ti ti-versions me-1"></i>{{ __('View Versions') }}
-        </a>
+        @if($subject)
+            <a href="{{ route('version-control.audit.versions', ['model' => $modelSlug, 'id' => $subject->id]) }}" class="btn btn-primary">
+                <i class="ti ti-versions me-1"></i>{{ __('View Versions') }}
+            </a>
+        @endif
     </div>
 </div>
 
@@ -41,24 +47,34 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <strong>{{ __('Type') }}:</strong> {{ class_basename($subject) }}<br>
-                <strong>ID:</strong> {{ $subject->id }}<br>
-                @if(isset($subject->name))
-                    <strong>{{ __('Name') }}:</strong> {{ $subject->name }}<br>
-                @endif
-                @if(isset($subject->title))
-                    <strong>{{ __('Title') }}:</strong> {{ $subject->title }}<br>
-                @endif
-                @if(isset($subject->email))
-                    <strong>{{ __('Email') }}:</strong> {{ $subject->email }}<br>
+                <strong>{{ __('Type') }}:</strong> {{ $model }}<br>
+                @if($subject)
+                    <strong>ID:</strong> {{ $subject->id }}<br>
+                    @if(isset($subject->name))
+                        <strong>{{ __('Name') }}:</strong> {{ $subject->name }}<br>
+                    @endif
+                    @if(isset($subject->title))
+                        <strong>{{ __('Title') }}:</strong> {{ $subject->title }}<br>
+                    @endif
+                    @if(isset($subject->email))
+                        <strong>{{ __('Email') }}:</strong> {{ $subject->email }}<br>
+                    @endif
+                @else
+                    <strong>ID:</strong> <span class="text-danger">{{ __('Record deleted') }}</span><br>
+                    <strong>{{ __('Status') }}:</strong> <span class="text-danger">{{ __('This record no longer exists') }}</span><br>
                 @endif
             </div>
             <div class="col-md-6">
-                <strong>{{ __('Created') }}:</strong> {{ $subject->created_at->format('M d, Y H:i:s') }}<br>
-                <strong>{{ __('Updated') }}:</strong> {{ $subject->updated_at->format('M d, Y H:i:s') }}<br>
-                <strong>{{ __('Total Activities') }}:</strong> {{ $activities->total() }}<br>
-                @if($activities->count() > 0)
-                    <strong>{{ __('Last Activity') }}:</strong> {{ $activities->first()->created_at->format('M d, Y H:i:s') }}
+                @if($subject)
+                    <strong>{{ __('Created') }}:</strong> {{ $subject->created_at->format('M d, Y H:i:s') }}<br>
+                    <strong>{{ __('Updated') }}:</strong> {{ $subject->updated_at->format('M d, Y H:i:s') }}<br>
+                    <strong>{{ __('Total Activities') }}:</strong> {{ $activities->total() }}<br>
+                    @if($activities->count() > 0)
+                        <strong>{{ __('Last Activity') }}:</strong> {{ $activities->first()->created_at->format('M d, Y H:i:s') }}
+                    @endif
+                @else
+                    <strong>{{ __('Available Activities') }}:</strong> {{ $activities->count() }}<br>
+                    <strong>{{ __('Note') }}:</strong> <span class="text-muted">{{ __('Only activity history is available for deleted records') }}</span><br>
                 @endif
             </div>
         </div>
