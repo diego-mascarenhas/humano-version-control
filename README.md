@@ -18,13 +18,42 @@ Advanced version control and audit system with restoration capabilities for Lara
 
 ## Installation
 
+### Requirements
+
+This package requires the following dependencies:
+
+- PHP 8.1 or higher
+- Laravel 10.0 or higher
+- `spatie/laravel-activitylog` ^4.10 - For activity logging
+- `spatie/laravel-permission` ^5.10|^6.0 - For role and permission management  
+- `yajra/laravel-datatables-oracle` ^10.11 - For DataTables functionality
+
+### Install via Composer
+
 You can install the package via composer:
 
 ```bash
 composer require idoneo/humano-version-control
 ```
 
-Publish and run the migrations:
+### Publish Dependencies
+
+If you haven't already installed the required dependencies, they will be installed automatically. However, you may need to configure them:
+
+```bash
+# Publish and run activity log migrations
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+
+# Publish and run permission migrations  
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+
+# Run all migrations
+php artisan migrate
+```
+
+### Package Setup
+
+Publish and run the package migrations:
 
 ```bash
 php artisan vendor:publish --tag="humano-version-control-migrations"

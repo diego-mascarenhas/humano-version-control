@@ -2,6 +2,44 @@
 
 All notable changes to `humano-version-control` will be documented in this file.
 
+## [1.3.2] - 2025-10-01
+
+### Added
+- **CRITICAL**: Added missing `spatie/laravel-permission` dependency to composer.json
+- Complete translation support for comparison and restoration page headers
+- Comprehensive dependency documentation in README.md
+
+### Fixed
+- Fixed missing dependency that could cause installation failures
+- Centered Status column content in comparison and restoration tables
+- Fixed dependency version constraints for better compatibility
+
+### Improved
+- Enhanced installation documentation with detailed requirements
+- Added step-by-step dependency setup instructions
+- Improved visual alignment in all table views
+- Better package reliability for new installations
+
+### Security
+- Maintained mandatory permission system for data restoration security
+- Role-based access control remains enforced by default
+
+## [1.3.1] - 2025-10-01
+
+### Added
+- Restored "Restore Version A" and "Restore Version B" buttons in version comparison view
+- Complete translations for restore functionality in Spanish and English
+
+### Fixed
+- Fixed `Collection::paginate()` error when viewing activities of deleted records
+- Fixed null subject error in activity display with proper error handling
+- Enhanced handling of deleted/missing model records in activity views
+
+### Improved
+- Better UX for deleted records with informative messages
+- Manual pagination handling for single activities when subjects are deleted
+- Enhanced error resilience for missing model relationships
+
 ## [1.3.0] - 2025-10-01
 
 ### Added

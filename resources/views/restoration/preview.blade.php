@@ -1,19 +1,19 @@
 @extends('layouts.layoutMaster')
 
-@section('title', 'Restore Preview')
+@section('title', __('Restore Preview'))
 
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">Version Control /</span>
-            Restore {{ class_basename($activity->subject_type) }}
+            <span class="text-muted fw-light">{{ __('Version Control') }} /</span>
+            {{ __('Restore') }} {{ class_basename($activity->subject_type) }}
         </h4>
-        <p class="text-muted">Preview and restore from version {{ $activity->created_at->format('M d, Y H:i:s') }}</p>
+        <p class="text-muted">{{ __('Preview and restore from version :date', ['date' => $activity->created_at->format('M d, Y H:i:s')]) }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.audit.show', ['model' => $model, 'id' => $subject->id]) }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>Back to History
+            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to History') }}
         </a>
     </div>
 </div>
@@ -21,19 +21,19 @@
 <!-- Version Info -->
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="card-title mb-0">Version Information</h5>
+        <h5 class="card-title mb-0">{{ __('Version Information') }}</h5>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <strong>Action:</strong> {{ ucfirst($activity->description) }}<br>
-                <strong>Date:</strong> {{ $activity->created_at->format('M d, Y H:i:s') }}<br>
-                <strong>User:</strong> {{ $activity->causer ? $activity->causer->name : 'System' }}
+                <strong>{{ __('Action') }}:</strong> {{ __(ucfirst($activity->description)) }}<br>
+                <strong>{{ __('Date') }}:</strong> {{ $activity->created_at->format('M d, Y H:i:s') }}<br>
+                <strong>{{ __('User') }}:</strong> {{ $activity->causer ? $activity->causer->name : __('System') }}
             </div>
             <div class="col-md-6">
-                <strong>Record:</strong> {{ class_basename($activity->subject_type) }} #{{ $subject->id }}<br>
-                <strong>Current Time:</strong> {{ now()->format('M d, Y H:i:s') }}<br>
-                <strong>Age:</strong> {{ $activity->created_at->diffForHumans() }}
+                <strong>{{ __('Record') }}:</strong> {{ class_basename($activity->subject_type) }} #{{ $subject->id }}<br>
+                <strong>{{ __('Current Time') }}:</strong> {{ now()->format('M d, Y H:i:s') }}<br>
+                <strong>{{ __('Age') }}:</strong> {{ $activity->created_at->diffForHumans() }}
             </div>
         </div>
     </div>
@@ -45,11 +45,11 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Field Comparison</h5>
+            <h5 class="card-title mb-0">{{ __('Field Comparison') }}</h5>
             <div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="select-all">Select All</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="select-none">Select None</button>
-                <button type="button" class="btn btn-sm btn-outline-primary" id="select-changed">Only Changed</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="select-all">{{ __('Select All') }}</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="select-none">{{ __('Select None') }}</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" id="select-changed">{{ __('Only Changed') }}</button>
             </div>
         </div>
         <div class="card-body">
@@ -63,10 +63,10 @@
                                         <input class="form-check-input" type="checkbox" id="select-all-checkbox">
                                     </div>
                                 </th>
-                                <th>Field</th>
-                                <th>Current Value</th>
-                                <th>Version Value</th>
-                                <th>Status</th>
+                                <th>{{ __('Field') }}</th>
+                                <th>{{ __('Current Value') }}</th>
+                                <th>{{ __('Version Value') }}</th>
+                                <th class="text-center">{{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,11 +115,11 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if($data['changed'])
-                                            <span class="badge bg-warning">Changed</span>
+                                            <span class="badge bg-warning">{{ __('Changed') }}</span>
                                         @else
-                                            <span class="badge bg-success">Same</span>
+                                            <span class="badge bg-success">{{ __('Same') }}</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -130,7 +130,7 @@
             @else
                 <div class="text-center py-4">
                     <i class="ti ti-info-circle display-4 text-muted"></i>
-                    <p class="text-muted mt-2">No field differences found</p>
+                    <p class="text-muted mt-2">{{ __('No field differences found') }}</p>
                 </div>
             @endif
         </div>
@@ -142,14 +142,14 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="confirm-restore" required>
                             <label class="form-check-label" for="confirm-restore">
-                                I understand that this action will modify the current record
+                                {{ __('I understand that this action will modify the current record') }}
                             </label>
                         </div>
                     </div>
                     <div class="col-md-6 text-end">
-                        <button type="button" class="btn btn-outline-secondary me-2" onclick="history.back()">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary me-2" onclick="history.back()">{{ __('Cancel') }}</button>
                         <button type="submit" class="btn btn-success" id="restore-button" disabled>
-                            <i class="ti ti-restore me-1"></i>Restore Selected Fields
+                            <i class="ti ti-restore me-1"></i>{{ __('Restore Selected Fields') }}
                         </button>
                     </div>
                 </div>

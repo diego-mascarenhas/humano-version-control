@@ -1,19 +1,19 @@
 @extends('layouts.layoutMaster')
 
-@section('title', 'Compare Versions')
+@section('title', __('Compare Versions'))
 
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
     <div class="d-flex flex-column justify-content-center">
         <h4 class="mb-1 mt-3">
-            <span class="text-muted fw-light">Version Control /</span>
-            Compare Versions
+            <span class="text-muted fw-light">{{ __('Version Control') }} /</span>
+            {{ __('Compare Versions') }}
         </h4>
-        <p class="text-muted">Side-by-side comparison of two versions</p>
+        <p class="text-muted">{{ __('Side-by-side comparison of two versions') }}</p>
     </div>
     <div class="d-flex align-content-center flex-wrap gap-3">
         <a href="{{ route('version-control.audit.index') }}" class="btn btn-outline-primary">
-            <i class="ti ti-arrow-left me-1"></i>Back to Audit Trail
+            <i class="ti ti-arrow-left me-1"></i>{{ __('Back to Audit Trail') }}
         </a>
     </div>
 </div>
@@ -61,7 +61,7 @@
 <!-- Comparison Results -->
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title mb-0">Field Comparison</h5>
+        <h5 class="card-title mb-0">{{ __('Field Comparison') }}</h5>
     </div>
     <div class="card-body">
         @if(count($differences) > 0)
@@ -69,10 +69,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th width="25%">Field</th>
-                            <th width="35%">Version A Value</th>
-                            <th width="35%">Version B Value</th>
-                            <th width="5%">Status</th>
+                            <th width="25%">{{ __('Field') }}</th>
+                            <th width="35%">{{ __('Version A Value') }}</th>
+                            <th width="35%">{{ __('Version B Value') }}</th>
+                            <th width="5%" class="text-center">{{ __('Status') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,9 +114,9 @@
                                 </td>
                                 <td class="text-center">
                                     @if($isDifferent)
-                                        <i class="ti ti-x text-warning" title="Different"></i>
+                                        <i class="ti ti-x text-warning" title="{{ __('Different') }}"></i>
                                     @else
-                                        <i class="ti ti-check text-success" title="Same"></i>
+                                        <i class="ti ti-check text-success" title="{{ __('Same') }}"></i>
                                     @endif
                                 </td>
                             </tr>
@@ -137,7 +137,7 @@
                         <div class="card bg-warning-subtle">
                             <div class="card-body text-center">
                                 <h4 class="text-warning">{{ $changedFields->count() }}</h4>
-                                <p class="mb-0">Fields Changed</p>
+                                <p class="mb-0">{{ __('Fields Changed') }}</p>
                             </div>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                         <div class="card bg-success-subtle">
                             <div class="card-body text-center">
                                 <h4 class="text-success">{{ $unchangedFields->count() }}</h4>
-                                <p class="mb-0">Fields Unchanged</p>
+                                <p class="mb-0">{{ __('Fields Unchanged') }}</p>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                         <div class="card bg-primary-subtle">
                             <div class="card-body text-center">
                                 <h4 class="text-primary">{{ count($differences) }}</h4>
-                                <p class="mb-0">Total Fields</p>
+                                <p class="mb-0">{{ __('Total Fields') }}</p>
                             </div>
                         </div>
                     </div>
@@ -167,10 +167,10 @@
                         <div class="d-flex align-items-center">
                             <i class="ti ti-info-circle me-2"></i>
                             <div class="flex-grow-1">
-                                <strong>Found {{ $changedFields->count() }} difference(s) between the versions.</strong>
+                                <strong>{{ __('Found :count difference(s) between the versions.', ['count' => $changedFields->count()]) }}</strong>
                                 <br>
                                 <small>
-                                    Changed fields:
+                                    {{ __('Changed fields') }}:
                                     {{ $changedFields->keys()->map(fn($field) => ucwords(str_replace('_', ' ', $field)))->join(', ') }}
                                 </small>
                             </div>
@@ -199,8 +199,8 @@
         @else
             <div class="text-center py-5">
                 <i class="ti ti-equal display-4 text-success"></i>
-                <h5 class="mt-3 text-success">Versions are Identical</h5>
-                <p class="text-muted">No differences found between the selected versions.</p>
+                <h5 class="mt-3 text-success">{{ __('Versions are Identical') }}</h5>
+                <p class="text-muted">{{ __('No differences found between the selected versions.') }}</p>
             </div>
         @endif
     </div>
