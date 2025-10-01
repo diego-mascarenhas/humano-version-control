@@ -93,17 +93,28 @@
                 @foreach($activities as $activity)
                     <div class="timeline-item">
                         <div class="timeline-marker">
-                            <div class="timeline-marker-indicator
-                                @if($activity->description === 'created') bg-success
-                                @elseif($activity->description === 'updated') bg-primary
-                                @elseif($activity->description === 'deleted') bg-danger
-                                @else bg-info
-                                @endif">
-                                <i class="ti ti-{{
-                                    $activity->description === 'created' ? 'plus' :
-                                    ($activity->description === 'updated' ? 'edit' :
-                                    ($activity->description === 'deleted' ? 'trash' : 'activity'))
-                                }}"></i>
+                            @php
+                                // Mapeo mejorado que detecta palabras clave en la descripción
+                                $description = strtolower($activity->description);
+                                
+                                if (str_contains($description, 'creado') || str_contains($description, 'created')) {
+                                    $actionConfig = ['icon' => 'plus', 'color' => 'success'];
+                                } elseif (str_contains($description, 'actualizado') || str_contains($description, 'updated')) {
+                                    $actionConfig = ['icon' => 'edit', 'color' => 'primary'];
+                                } elseif (str_contains($description, 'eliminado') || str_contains($description, 'deleted')) {
+                                    $actionConfig = ['icon' => 'trash', 'color' => 'danger'];
+                                } elseif (str_contains($description, 'restaurado') || str_contains($description, 'restored')) {
+                                    $actionConfig = ['icon' => 'restore', 'color' => 'info'];
+                                } elseif (str_contains($description, 'logged in') || str_contains($description, 'login')) {
+                                    $actionConfig = ['icon' => 'login', 'color' => 'warning'];
+                                } elseif (str_contains($description, 'logged out') || str_contains($description, 'logout')) {
+                                    $actionConfig = ['icon' => 'logout', 'color' => 'secondary'];
+                                } else {
+                                    $actionConfig = ['icon' => 'activity', 'color' => 'info'];
+                                }
+                            @endphp
+                            <div class="timeline-marker-indicator bg-{{ $actionConfig['color'] }}">
+                                <i class="ti ti-{{ $actionConfig['icon'] }}"></i>
                             </div>
                         </div>
                         <div class="timeline-content">
@@ -284,54 +295,89 @@ function deleteActivity(activityId, element) {
 </script>
 
 <style>
+/* Timeline con línea conectora simple */
 .timeline {
     position: relative;
-    padding-left: 30px;
+    padding: 0;
+    margin: 0;
+    border: none !important;
+    background: none !important;
 }
 
 .timeline::before {
     content: '';
     position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #e9ecef;
+    left: 1rem;
+    top: 1rem;
+    bottom: 2rem;
+    width: 1px;
+    background-color: #d9dee3;
+    z-index: 1;
 }
 
 .timeline-item {
     position: relative;
+    padding-left: 3rem;
     margin-bottom: 2rem;
+    border: none !important;
+    background: none !important;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item::before,
+.timeline-item::after {
+    display: none !important;
 }
 
 .timeline-marker {
     position: absolute;
-    left: -22px;
+    left: 0;
     top: 0;
+    border: none !important;
+    background: none !important;
+}
+
+.timeline-marker::before,
+.timeline-marker::after {
+    display: none !important;
 }
 
 .timeline-marker-indicator {
-    width: 30px;
-    height: 30px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 14px;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 10;
+    border: none !important;
 }
 
 .timeline-content {
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: #ffffff;
+    border-radius: 0.375rem;
     padding: 1rem;
-    border-left: 3px solid #e9ecef;
+    border: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content::before,
+.timeline-content::after {
+    display: none !important;
 }
 
 .activity-details {
-    border-top: 1px solid #e9ecef;
-    padding-top: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 1rem;
     margin-top: 1rem;
+    border: none !important;
 }
 </style>
 @endsection

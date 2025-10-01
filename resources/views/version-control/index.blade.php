@@ -140,7 +140,7 @@
                             <div class="list-group-item d-flex align-items-center px-0">
                                 <div class="avatar flex-shrink-0 me-3">
                                     <div class="avatar-initial {{ $actionConfig['bg'] }} rounded-circle">
-                                        <i class="ti ti-{{ $actionConfig['icon'] }} text-{{ $actionConfig['color'] }}"></i>
+                                        <i class="ti ti-{{ $actionConfig['icon'] }}"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
